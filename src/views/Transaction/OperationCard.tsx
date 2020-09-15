@@ -14,6 +14,15 @@ interface OperationCardProps {
 
 export default function OperationCard(props: OperationCardProps) {
     switch (props.operation.type) {
+        case 'createAccount':
+            return (
+                <CreateAccountOperationCard
+                    operation={props.operation as Operation.CreateAccount}
+                    network={props.network}
+                    getRandomColorForKey={props.getRandomColorForKey}
+                />
+            )
+
         case 'payment':
             return (
                 <PaymentOperationCard
@@ -74,6 +83,63 @@ export default function OperationCard(props: OperationCardProps) {
     )
 }
 
+interface CreateAccountOperationCardProps {
+    transactionSource?: string;
+    operation: Operation.CreateAccount;
+    network: string;
+    getRandomColorForKey: (key: string) => string;
+}
+
+const useCreateAccountOperationCardStyles = makeStyles((theme: Theme) => ({
+    bodyCard: {
+        backgroundColor: theme.palette.background.default
+    },
+    accountCardHeader: {
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        alignItems: 'center'
+    }
+}));
+
+function CreateAccountOperationCard(props: CreateAccountOperationCardProps) {
+    const classes = useCreateAccountOperationCardStyles();
+
+    const operationSourceAccount = props.operation.source
+        ? props.operation.source
+        : props.transactionSource
+            ? props.transactionSource
+            : 'no source'
+
+    return (
+        <Card className={classes.bodyCard}>
+            <CardContent>
+                <DisplayField
+                    label={'Type'}
+                    value={'Payment'}
+                />
+            </CardContent>
+            <CardContent>
+                {/* Operation Source Account */}
+                <AccountCard
+                    label={'Source'}
+                    accountID={operationSourceAccount}
+                    horizonURL={props.network}
+                    getRandomColorForKey={props.getRandomColorForKey}
+                />
+
+                <div style={{height: 8}}/>
+
+                {/* Operation Destination Account */}
+                <AccountCard
+                    label={'Destination'}
+                    accountID={props.operation.destination}
+                    horizonURL={props.network}
+                    getRandomColorForKey={props.getRandomColorForKey}
+                />
+            </CardContent>
+        </Card>
+    )
+}
 
 interface PaymentOperationCardProps {
     transactionSource?: string;
