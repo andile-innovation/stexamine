@@ -33,7 +33,7 @@ export interface AnalyseFeeBumpTransactionSignaturesRequest {
 }
 
 export interface AnalyseFeeBumpTransactionSignaturesResponse {
-    feeBumpResult: AnalyseTransactionSignaturesResult;
+    feeBumpResult: AnalyseTransactionSignaturesResult[];
     innerTransactionResults: AnalyseTransactionSignaturesResult[];
 }
 
@@ -134,12 +134,42 @@ export class Wrapper {
     }
 
     async analyseFeeBumpTransactionSignatures(request: AnalyseFeeBumpTransactionSignaturesRequest): Promise<AnalyseFeeBumpTransactionSignaturesResponse> {
+        // get potential signers for the fee bump txn source
+        const potentialSigners = await this.getAccountSigners(request.transaction.feeSource)
+        const feeBumpResult: AnalyseTransactionSignaturesResult[] = [];
+
+        const txnData = request.transaction.hash();
+
+        // for every signature...
+        nextSignature:
+            for (const sig of request.transaction.signatures) {
+                // try and verify with each potential signer...
+                for (const potentialSigner of potentialSigners) {
+                    try {
+                        if (signedBySigner(potentialSigner, txnData, sig.signature())) {
+                            // if it can be verified this signature is accounted for
+                            feeBumpResult.push({
+                                signature: sig.toXDR('base64'),
+                                publicKey: potentialSigner.key,
+                                result: SignatureAnalysisResult.verified
+                            })
+                            continue nextSignature;
+                        }
+                    } catch (e) {
+                        console.error(`error verifying: ${e}`)
+                        throw new Error(`error verifying: ${e}`)
+                    }
+                }
+                // if execution reaches here then the signature could not be verified
+                feeBumpResult.push({
+                    signature: sig.toXDR('base64'),
+                    publicKey: '---',
+                    result: SignatureAnalysisResult.verified
+                })
+            }
+
         return {
-            feeBumpResult: {
-                publicKey: '',
-                signature: '',
-                result: SignatureAnalysisResult.unknown
-            },
+            feeBumpResult,
             innerTransactionResults: (await this.analyseTransactionSignatures({
                 transaction: request.transaction.innerTransaction
             })).results

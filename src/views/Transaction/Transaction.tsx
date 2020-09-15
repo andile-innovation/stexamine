@@ -10,7 +10,6 @@ import {AccountCard} from 'components/Stellar';
 
 import {
     AnalyseTransactionSignaturesResult,
-    SignatureAnalysisResult,
     StellarHorizonURL,
     Wrapper
 } from 'utilities/stellar/Wrapper';
@@ -50,11 +49,7 @@ export default function LandingPage() {
     const usedColors = useRef<{ [key: string]: string }>({})
     const [network] = useState('https://horizon-testnet.stellar.org');
     const {current: stellarWrapper} = useRef(new Wrapper(StellarHorizonURL.Test))
-    const [feeBumpTransactionSignatureAnalysisResult, setFeeBumpTransactionSignatureAnalysisResult] = useState<AnalyseTransactionSignaturesResult>({
-        publicKey: '',
-        signature: '',
-        result: SignatureAnalysisResult.unknown
-    });
+    const [feeBumpTransactionSignatureAnalysisResults, setFeeBumpTransactionSignatureAnalysisResult] = useState<AnalyseTransactionSignaturesResult[]>([]);
     const [transactionSignatureAnalysisResults, setTransactionSignatureAnalysisResults] = useState<AnalyseTransactionSignaturesResult[]>([]);
 
     const getRandomColorForKey = (key: string) => {
@@ -260,24 +255,26 @@ export default function LandingPage() {
                                     titleTypographyProps={{variant: 'body1'}}
                                 />
                                 <CardContent>
-                                    {feeBumpTransactionSignatureAnalysisResult.signature
+                                    {feeBumpTransactionSignatureAnalysisResults.length
                                         ? (
                                             <Grid container direction={'column'} spacing={1}>
-                                                <Grid item>
-                                                    <DisplayField
-                                                        label={'Signature'}
-                                                        value={feeBumpTransactionSignatureAnalysisResult.signature}
-                                                    />
-                                                    <DisplayField
-                                                        label={'Public Key'}
-                                                        value={feeBumpTransactionSignatureAnalysisResult.publicKey}
-                                                        valueTypographyProps={{style: {color: getRandomColorForKey(feeBumpTransactionSignatureAnalysisResult.publicKey)}}}
-                                                    />
-                                                    <DisplayField
-                                                        label={'Result'}
-                                                        value={feeBumpTransactionSignatureAnalysisResult.result}
-                                                    />
-                                                </Grid>
+                                                {feeBumpTransactionSignatureAnalysisResults.map((r, idx) => (
+                                                    <Grid item key={idx}>
+                                                        <DisplayField
+                                                            label={'Signature'}
+                                                            value={r.signature}
+                                                        />
+                                                        <DisplayField
+                                                            label={'Public Key'}
+                                                            value={r.publicKey}
+                                                            valueTypographyProps={{style: {color: getRandomColorForKey(r.publicKey)}}}
+                                                        />
+                                                        <DisplayField
+                                                            label={'Result'}
+                                                            value={r.result}
+                                                        />
+                                                    </Grid>
+                                                ))}
                                             </Grid>
                                         )
                                         : 'Not Signed'
