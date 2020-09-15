@@ -105,6 +105,8 @@ const useCreateAccountOperationCardStyles = makeStyles((theme: Theme) => ({
 function CreateAccountOperationCard(props: CreateAccountOperationCardProps) {
     const classes = useCreateAccountOperationCardStyles();
 
+    const assetColor = props.getRandomColorForKey('XLM');
+
     const operationSourceAccount = props.operation.source
         ? props.operation.source
         : props.transactionSource
@@ -141,7 +143,8 @@ function CreateAccountOperationCard(props: CreateAccountOperationCardProps) {
             <CardContent>
                 <DisplayField
                     label={'Opening Balance'}
-                    value={numeral(props.operation.startingBalance).format('0,0.0000000')}
+                    value={`XLM ${numeral(props.operation.startingBalance).format('0,0.0000000')}`}
+                    valueTypographyProps={{style: {color: assetColor}}}
                 />
             </CardContent>
         </Card>
