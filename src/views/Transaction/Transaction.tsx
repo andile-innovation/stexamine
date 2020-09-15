@@ -311,7 +311,7 @@ export default function LandingPage() {
                                 title={'Inner Transaction Envelope'}
                                 titleTypographyProps={{variant: 'body1'}}
                             />
-                            <CardContent>
+                            <CardContent classes={{root: classes.root}}>
                                 {allTransactionContent}
                             </CardContent>
                         </Card>
