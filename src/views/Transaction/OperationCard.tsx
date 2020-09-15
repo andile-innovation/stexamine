@@ -116,7 +116,7 @@ function CreateAccountOperationCard(props: CreateAccountOperationCardProps) {
             <CardContent>
                 <DisplayField
                     label={'Type'}
-                    value={'Payment'}
+                    value={'Create Account'}
                 />
             </CardContent>
             <CardContent>
@@ -132,10 +132,16 @@ function CreateAccountOperationCard(props: CreateAccountOperationCardProps) {
 
                 {/* Operation Destination Account */}
                 <AccountCard
-                    label={'Destination'}
+                    label={'Destination (New)'}
                     accountID={props.operation.destination}
                     horizonURL={props.network}
                     getRandomColorForKey={props.getRandomColorForKey}
+                />
+            </CardContent>
+            <CardContent>
+                <DisplayField
+                    label={'Opening Balance'}
+                    value={numeral(props.operation.startingBalance).format('0,0.0000000')}
                 />
             </CardContent>
         </Card>
