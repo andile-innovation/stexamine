@@ -101,6 +101,13 @@ export default function AccountCard(props: Props) {
                         if (accountResponse) {
                             return (
                                 <Grid container spacing={1} direction={'column'}>
+                                    <Grid item>
+                                        <DisplayField
+                                            label={'Sequence Number'}
+                                            value={accountResponse.sequence}
+                                        />
+                                    </Grid>
+
                                     {/* Balances */}
                                     <Grid item>
                                         <Card className={cx({[classes.detailCard]: !props.invertColors})}>
