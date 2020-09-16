@@ -176,7 +176,7 @@ export default function AccountCard(props: Props) {
                                                                         label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ]`}
                                                                         value={
                                                                             <pre>{numeral(otherBalance.balance).format('0,0.0000000') +
-                                                                            `\tLimit: ${otherBalance.limit} \tAuthorized: ${otherBalance.is_authorized}`}</pre>}
+                                                                            `\tLimit: ${numeral(otherBalance.limit).format('0,0.0000000')} \tAuthorized: ${otherBalance.is_authorized}`}</pre>}
                                                                         labelTypographyProps={{
                                                                             style: {
                                                                                 color: props.getRandomColorForKey
