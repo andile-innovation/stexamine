@@ -21,18 +21,18 @@ const useStyles = makeStyles((theme: Theme) => ({
         zIndex: 1029,
         border: '0',
         transition: 'all 150ms ease 0s',
-        height: '50px',
+        height: '60px',
         display: 'flex',
         boxShadow: '0 10px 20px -12px rgba(0, 0, 0, 0.42), 0 3px 20px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)',
         padding: 0
     },
     toolbarDesktop: {
-        height: '50px',
-        minHeight: '50px',
+        height: '60px',
+        minHeight: '60px',
         display: 'flex'
     },
     selectLedgerNetwork: {
-        paddingLeft: theme.spacing(1),
+        paddingLeft: theme.spacing(2),
         width: 150
     },
     sidebarMinimize: {
@@ -46,8 +46,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         paddingLeft: '10px'
     },
     toolbarMini: {
-        height: '50px',
-        minHeight: '50px',
+        height: '60px',
+        minHeight: '600px',
         display: 'flex',
         justifyContent: 'space-between'
     },
