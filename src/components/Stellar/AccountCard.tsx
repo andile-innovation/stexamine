@@ -42,9 +42,10 @@ export default function AccountCard(props: Props) {
     const [loading, setLoading] = useState(false);
     const [accountResponse, setAccountResponse] = useState<AccountResponse | undefined>(undefined)
     const [accountID, setAccountID] = useState(props.accountID ? props.accountID : 'GBEL5ZFRQ5CJSOJ4COBC6RDRE73PPY3NXBMKGLBKZ2QWTJLCHVAIAJGF')
-    const [cardOpen, setCardOpen] = useState(false);
+    const [accountCardOpen, setAccountCardOpen] = useState(true);
     const [balancesOpen, setBalancesOpen] = useState(false);
     const [signatoriesOpen, setSignatoriesOpen] = useState(false);
+    const [transactionsOpen, setTransactionsOpen] = useState(false);
     const theme = useTheme();
     const {stellarContextStellarClient} = useStellarContext();
 
@@ -115,15 +116,15 @@ export default function AccountCard(props: Props) {
                             )
                         }
                         <Tooltip
-                            title={cardOpen ? 'Show Less' : 'Show More'}
+                            title={accountCardOpen ? 'Show Less' : 'Show More'}
                             placement={'top'}
                         >
                             <span>
                                 <IconButton
                                     size={'small'}
-                                    onClick={() => setCardOpen(!cardOpen)}
+                                    onClick={() => setAccountCardOpen(!accountCardOpen)}
                                 >
-                                    {cardOpen
+                                    {accountCardOpen
                                         ? <CloseCardBodyIcon/>
                                         : <OpenCardBodyIcon/>
                                     }
@@ -133,7 +134,7 @@ export default function AccountCard(props: Props) {
                     </div>
                 }
             />
-            <Collapse in={cardOpen}>
+            <Collapse in={accountCardOpen}>
                 <CardContent>
                     {(() => {
                         if (loading) {
@@ -322,6 +323,46 @@ export default function AccountCard(props: Props) {
                                                         />
                                                     </CardContent>
                                                 ))}
+                                            </Collapse>
+                                        </Card>
+                                    </Grid>
+
+                                    {/* Transactions */}
+                                    <Grid item>
+                                        <Card className={cx({[classes.detailCard]: !props.invertColors})}>
+                                            <CardHeader
+                                                disableTypography
+                                                title={
+                                                    <div className={classes.accountCardHeader}>
+                                                        <Typography
+                                                            children={'Transactions'}
+                                                        />
+                                                        <Tooltip
+                                                            title={signatoriesOpen ? 'Hide Transactions' : 'Show Transactions'}
+                                                            placement={'top'}
+                                                        >
+                                                            <span>
+                                                                <IconButton
+                                                                    size={'small'}
+                                                                    onClick={() =>setTransactionsOpen(!transactionsOpen)}
+                                                                >
+                                                                    {transactionsOpen
+                                                                        ? <CloseCardBodyIcon/>
+                                                                        : <OpenCardBodyIcon/>
+                                                                    }
+                                                                </IconButton>
+                                                            </span>
+                                                        </Tooltip>
+                                                    </div>
+                                                }
+                                            />
+                                            <Collapse in={transactionsOpen}>
+                                                <CardContent >
+                                                    <DisplayField
+                                                        label={'Stfu'}
+                                                        value={'too'}
+                                                    />
+                                                </CardContent>
                                             </Collapse>
                                         </Card>
                                     </Grid>
