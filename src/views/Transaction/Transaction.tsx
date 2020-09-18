@@ -7,12 +7,10 @@ import OperationCard from './OperationCard';
 import cx from 'classnames';
 import {getRandomColor} from 'utilities/color';
 import {AccountCard} from 'components/Stellar';
-
+import {useStellarContext} from 'context/Stellar';
 import {
-    AnalyseTransactionSignaturesResult,
-    StellarHorizonURL,
-    Wrapper
-} from 'utilities/stellar/Wrapper';
+    AnalyseTransactionSignaturesResult
+} from '../../context/Stellar/Client';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -47,10 +45,9 @@ export default function LandingPage() {
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
     const [feeBumpTransaction, setFeeBumpTransaction] = useState<FeeBumpTransaction | undefined>(undefined);
     const usedColors = useRef<{ [key: string]: string }>({})
-    const [network] = useState('https://horizon-testnet.stellar.org');
-    const {current: stellarWrapper} = useRef(new Wrapper(StellarHorizonURL.Test))
     const [feeBumpTransactionSignatureAnalysisResults, setFeeBumpTransactionSignatureAnalysisResult] = useState<AnalyseTransactionSignaturesResult[]>([]);
     const [transactionSignatureAnalysisResults, setTransactionSignatureAnalysisResults] = useState<AnalyseTransactionSignaturesResult[]>([]);
+    const {stellarContextStellarClient} = useStellarContext();
 
     const getRandomColorForKey = (key: string) => {
         // if a color is already stored for this key, use it
@@ -77,7 +74,7 @@ export default function LandingPage() {
             try {
                 const txnEnv = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 const newTxn = new FeeBumpTransaction(txnEnv, Networks.TESTNET);
-                const feeBumpTxnSigAnalResp = await stellarWrapper.analyseFeeBumpTransactionSignatures({
+                const feeBumpTxnSigAnalResp = await stellarContextStellarClient.analyseFeeBumpTransactionSignatures({
                     transaction: newTxn
                 })
                 setFeeBumpTransactionSignatureAnalysisResult(feeBumpTxnSigAnalResp.feeBumpResult);
@@ -93,7 +90,7 @@ export default function LandingPage() {
             try {
                 const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 const newTxn = new Transaction(transactionEnvelope, Networks.TESTNET);
-                setTransactionSignatureAnalysisResults((await stellarWrapper.analyseTransactionSignatures({
+                setTransactionSignatureAnalysisResults((await stellarContextStellarClient.analyseTransactionSignatures({
                     transaction: newTxn
                 })).results);
                 setTransaction(newTxn);
@@ -103,7 +100,7 @@ export default function LandingPage() {
             }
             setLoading(false);
         })()
-    }, [xdrString, network, stellarWrapper])
+    }, [xdrString, stellarContextStellarClient])
 
     return (
         <div className={classes.root}>
@@ -153,7 +150,6 @@ export default function LandingPage() {
                                             />
                                             <AccountCard
                                                 accountID={transaction.source}
-                                                horizonURL={network}
                                                 getRandomColorForKey={getRandomColorForKey}
                                                 label={'Transaction Source'}
                                                 invertColors
@@ -208,7 +204,6 @@ export default function LandingPage() {
                                                     key={idx}
                                                     operation={op}
                                                     getRandomColorForKey={getRandomColorForKey}
-                                                    network={network}
                                                     transactionSource={transaction.source}
                                                 />
                                             </Grid>
@@ -295,7 +290,6 @@ export default function LandingPage() {
                             <CardContent>
                                 <AccountCard
                                     accountID={feeBumpTransaction.feeSource}
-                                    horizonURL={network}
                                     getRandomColorForKey={getRandomColorForKey}
                                     label={'Fee-bump Source Account'}
                                 />

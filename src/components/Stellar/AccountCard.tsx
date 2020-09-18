@@ -1,4 +1,4 @@
-import {AccountResponse, Server} from 'stellar-sdk';
+import {AccountResponse} from 'stellar-sdk';
 import React, {useEffect, useState} from 'react';
 import {
     Card,
@@ -15,10 +15,10 @@ import {DisplayField} from 'components/Form';
 import {ExpandLess as CloseCardBodyIcon, ExpandMore as OpenCardBodyIcon} from '@material-ui/icons';
 import cx from 'classnames';
 import numeral from 'numeral';
+import {useStellarContext} from 'context/Stellar';
 
 interface Props {
     accountID: string;
-    horizonURL: string;
     getRandomColorForKey?: (key: string) => string;
     label?: string;
     invertColors?: boolean;
@@ -43,6 +43,7 @@ export default function AccountCard(props: Props) {
     const [balancesOpen, setBalancesOpen] = useState(false);
     const [signatoriesOpen, setSignatoriesOpen] = useState(false);
     const theme = useTheme();
+    const {stellarContextStellarClient} = useStellarContext();
 
     const color = props.getRandomColorForKey
         ? props.getRandomColorForKey(props.accountID)
@@ -50,16 +51,15 @@ export default function AccountCard(props: Props) {
 
     useEffect(() => {
         (async () => {
-            const stellarServer = new Server(props.horizonURL);
             setLoading(true);
             try {
-                setAccountResponse(await stellarServer.loadAccount(props.accountID))
+                setAccountResponse(await stellarContextStellarClient.loadAccount(props.accountID))
             } catch (e) {
                 console.error(`unable to get account from stellar: ${e}`);
             }
             setLoading(false);
         })()
-    }, [props.accountID, props.horizonURL])
+    }, [props.accountID, stellarContextStellarClient])
 
     return (
         <Card className={cx({[classes.detailCard]: !!props.invertColors})}>

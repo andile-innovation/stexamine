@@ -4,10 +4,7 @@ import {
     FeeBumpTransaction
 } from 'stellar-sdk';
 import {isEqual} from 'lodash';
-
-export enum StellarHorizonURL {
-    Test = 'https://horizon-testnet.stellar.org'
-}
+import {StellarHorizonURL, StellarNetwork} from './index';
 
 export enum SignatureAnalysisResult {
     verified = 'Verified',
@@ -37,13 +34,22 @@ export interface AnalyseFeeBumpTransactionSignaturesResponse {
     innerTransactionResults: AnalyseTransactionSignaturesResult[];
 }
 
-export class Wrapper {
+export default class Client {
     public networkPassphrase: string = '';
-    public server: Server = new Server(StellarHorizonURL.Test);
+    public server: Server = new Server(StellarHorizonURL.TestNetwork);
 
-    constructor(stellarHorizonURL: StellarHorizonURL) {
-        if (stellarHorizonURL !== StellarHorizonURL.Test) {
-            this.server = new Server(stellarHorizonURL)
+    constructor(stellarNetwork: StellarNetwork) {
+        switch (stellarNetwork) {
+            case StellarNetwork.PublicNetwork:
+                this.server = new Server(StellarHorizonURL.PublicNetwork);
+                break;
+
+            case StellarNetwork.TestNetwork:
+                this.server = new Server(StellarHorizonURL.PublicNetwork);
+                break;
+
+            default:
+                throw new TypeError('unsupported stellar network')
         }
     }
 

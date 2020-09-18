@@ -1,19 +1,22 @@
 import AppContext, {useStellarContext} from './Stellar';
 
-enum StellarNetwork {
+export enum StellarNetwork {
     TestNetwork = 'Test',
     PublicNetwork = 'Public'
 }
 
-const AllStellarNetworks: StellarNetwork[] = [
+export const AllStellarNetworks: StellarNetwork[] = [
     StellarNetwork.PublicNetwork,
     StellarNetwork.TestNetwork
 ]
+
+export enum StellarHorizonURL {
+    TestNetwork = 'https://horizon-testnet.stellar.org',
+    PublicNetwork = 'https://horizon-testnet.stellar.org',
+}
 
 export default AppContext;
 
 export {
     useStellarContext,
-    StellarNetwork,
-    AllStellarNetworks
 }
