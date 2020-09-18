@@ -5,7 +5,7 @@ import App from './App';
 import {CssBaseline} from '@material-ui/core';
 import * as serviceWorker from './serviceWorker';
 import ThemeContext from 'context/Theme';
-import AppContext from './context/App';
+import AppContext from './context/Stellar';
 
 ReactDOM.render(
     <ThemeContext>

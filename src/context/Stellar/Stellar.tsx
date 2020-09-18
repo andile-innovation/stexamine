@@ -1,13 +1,13 @@
 import React, {useContext, useState} from 'react';
 
 interface Context {
-    appContextStellarNetwork: string;
-    changeStellarNetwork: (newNetwork: string) => void;
+    stellarContextStellarNetwork: string;
+    stellarContextChangeStellarNetwork: (newNetwork: string) => void;
 }
 
 const Context = React.createContext({} as Context);
 
-const AppContext: React.FC = ({children}: { children?: React.ReactNode }) => {
+const StellarContext: React.FC = ({children}: { children?: React.ReactNode }) => {
     const [stellarNetwork, setStellarNetwork] = useState('https://horizon-testnet.stellar.org');
 
     const changeStellarNetwork = (newNetwork: string) => {
@@ -17,8 +17,8 @@ const AppContext: React.FC = ({children}: { children?: React.ReactNode }) => {
     return (
         <Context.Provider
             value={{
-                appContextStellarNetwork: stellarNetwork,
-                changeStellarNetwork
+                stellarContextStellarNetwork: stellarNetwork,
+                stellarContextChangeStellarNetwork: changeStellarNetwork
             }}
         >
             {children}
@@ -26,8 +26,8 @@ const AppContext: React.FC = ({children}: { children?: React.ReactNode }) => {
     );
 };
 
-const useAppContext = () => useContext(Context);
+const useStellarContext = () => useContext(Context);
 export {
-    useAppContext
+    useStellarContext
 };
-export default AppContext;
+export default StellarContext;
