@@ -45,7 +45,7 @@ export default class Client {
                 break;
 
             case StellarNetwork.TestNetwork:
-                this.server = new Server(StellarHorizonURL.PublicNetwork);
+                this.server = new Server(StellarHorizonURL.TestNetwork);
                 break;
 
             default:
