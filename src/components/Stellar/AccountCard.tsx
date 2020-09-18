@@ -41,7 +41,7 @@ export default function AccountCard(props: Props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [accountResponse, setAccountResponse] = useState<AccountResponse | undefined>(undefined)
-    const [accountID, setAccountID] = useState(props.accountID ? props.accountID : '')
+    const [accountID, setAccountID] = useState(props.accountID ? props.accountID : 'GBEL5ZFRQ5CJSOJ4COBC6RDRE73PPY3NXBMKGLBKZ2QWTJLCHVAIAJGF')
     const [cardOpen, setCardOpen] = useState(false);
     const [balancesOpen, setBalancesOpen] = useState(false);
     const [signatoriesOpen, setSignatoriesOpen] = useState(false);
@@ -67,16 +67,29 @@ export default function AccountCard(props: Props) {
         })()
     }, [props.accountID, stellarContextStellarClient, accountID])
 
-    stellarContextStellarClient.server
-        .payments()
-        .cursor('now')
-        .stream({
-            onmessage: (record) => {
-                const typedRecord = record as any as ServerApi.AccountRecord;
-                console.log('acc:')
-                console.log(typedRecord)
+    // stellarContextStellarClient.server
+    //     .operations() // PaymentCallBuilder
+    //     .forAccount('GBZVMDOMNU5ZNDAUVHCSZXFJ6FJRBNXFL6NTY2BBANBVNM6NWPGTFUCV') // CallBuilder
+    //     .stream({
+    //         onmessage: (record) => {
+    //             const typedRecord = record as any as ServerApi.AccountRecord;
+    //             console.log('acc:')
+    //             console.log(typedRecord)
+    //         }
+    //     }) // CloseFunction
+
+    useEffect(() => {
+        (async () => {
+            try {
+                await stellarContextStellarClient.server
+                    .operations() // PaymentCallBuilder
+                    .forAccount(accountID) // CallBuilder
+                    .call();
+            } catch (e) {
+                console.error(`error getting operations: ${e}`);
             }
-        });
+        })();
+    }, [accountID, stellarContextStellarClient.server])
 
     return (
         <Card className={cx({[classes.detailCard]: !!props.invertColors})}>
@@ -214,8 +227,8 @@ export default function AccountCard(props: Props) {
                                                                         key={idx}
                                                                         label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ]`}
                                                                         value={
-                                                                            <pre>{numeral(otherBalance.balance).format('0,0.0000000') +
-                                                                            `\tLimit: ${numeral(otherBalance.limit).format('0,0.0000000')} \tAuthorized: ${otherBalance.is_authorized}`}</pre>}
+                                                                            `${numeral(otherBalance.balance).format('0,0.0000000')}    |    Limit: ${numeral(otherBalance.limit).format('0,0.0000000')}    |    Authorized: ${otherBalance.is_authorized}`
+                                                                        }
                                                                         labelTypographyProps={{
                                                                             style: {
                                                                                 color: props.getRandomColorForKey
