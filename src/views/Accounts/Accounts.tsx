@@ -74,13 +74,15 @@ export default function Accounts() {
                                 </Grid>
                                 <Grid item>
                                     <Tooltip title={'Remove Account Card'}>
-                                        <IconButton
-                                            size={'small'}
-                                            disabled={!idx}
-                                            onClick={handleRemoveAccountCard(idx)}
-                                        >
-                                            <DeleteAccountIcon/>
-                                        </IconButton>
+                                        <span>
+                                            <IconButton
+                                                size={'small'}
+                                                disabled={!idx}
+                                                onClick={handleRemoveAccountCard(idx)}
+                                            >
+                                                <DeleteAccountIcon/>
+                                            </IconButton>
+                                        </span>
                                     </Tooltip>
                                 </Grid>
                             </Grid>

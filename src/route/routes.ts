@@ -4,7 +4,8 @@ import {
     AccountBalanceWallet as AccountIcon
 } from '@material-ui/icons';
 import Transaction from 'views/Transaction/Transaction';
-import Accounts from 'views/Accounts/Accounts';
+import Accounts from 'views/Accounts';
+import Payments from 'views/Payments';
 
 export const defaultRoute: Route = {
     name: 'Transaction',
@@ -19,6 +20,12 @@ export const publicRoutes: Route[] = [
         name: 'Account',
         path: '/account',
         component: Accounts,
+        icon: AccountIcon
+    },
+    {
+        name: 'Payments',
+        path: '/payments',
+        component: Payments,
         icon: AccountIcon
     }
 ]

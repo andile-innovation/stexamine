@@ -1,4 +1,4 @@
-import {AccountResponse} from 'stellar-sdk';
+import {AccountResponse, ServerApi} from 'stellar-sdk';
 import React, {useEffect, useState} from 'react';
 import {
     Card,
@@ -35,6 +35,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
+// curl -H "Accept: text/event-stream" "https://horizon-testnet.stellar.org/accounts/GB7JFK56QXQ4DVJRNPDBXABNG3IVKIXWWJJRJICHRU22Z5R5PI65GAK3/payments"
+
 export default function AccountCard(props: Props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
@@ -52,6 +54,9 @@ export default function AccountCard(props: Props) {
 
     useEffect(() => {
         (async () => {
+            if (!accountID) {
+                return;
+            }
             setLoading(true);
             try {
                 setAccountResponse(await stellarContextStellarClient.loadAccount(accountID))
@@ -61,6 +66,17 @@ export default function AccountCard(props: Props) {
             setLoading(false);
         })()
     }, [props.accountID, stellarContextStellarClient, accountID])
+
+    stellarContextStellarClient.server
+        .accounts()
+        .cursor('now')
+        .stream({
+            onmessage: (record) => {
+                const typedRecord = record as any as ServerApi.AccountRecord;
+                console.log('acc:')
+                console.log(typedRecord)
+            }
+        });
 
     return (
         <Card className={cx({[classes.detailCard]: !!props.invertColors})}>
@@ -89,15 +105,17 @@ export default function AccountCard(props: Props) {
                             title={cardOpen ? 'Show Less' : 'Show More'}
                             placement={'top'}
                         >
-                            <IconButton
-                                size={'small'}
-                                onClick={() => setCardOpen(!cardOpen)}
-                            >
-                                {cardOpen
-                                    ? <CloseCardBodyIcon/>
-                                    : <OpenCardBodyIcon/>
-                                }
-                            </IconButton>
+                            <span>
+                                <IconButton
+                                    size={'small'}
+                                    onClick={() => setCardOpen(!cardOpen)}
+                                >
+                                    {cardOpen
+                                        ? <CloseCardBodyIcon/>
+                                        : <OpenCardBodyIcon/>
+                                    }
+                                </IconButton>
+                            </span>
                         </Tooltip>
                     </div>
                 }
@@ -141,15 +159,17 @@ export default function AccountCard(props: Props) {
                                                             title={balancesOpen ? 'Hide Balances' : 'Show Balances'}
                                                             placement={'top'}
                                                         >
-                                                            <IconButton
-                                                                size={'small'}
-                                                                onClick={() => setBalancesOpen(!balancesOpen)}
-                                                            >
-                                                                {balancesOpen
-                                                                    ? <CloseCardBodyIcon/>
-                                                                    : <OpenCardBodyIcon/>
-                                                                }
-                                                            </IconButton>
+                                                            <span>
+                                                                <IconButton
+                                                                    size={'small'}
+                                                                    onClick={() => setBalancesOpen(!balancesOpen)}
+                                                                >
+                                                                    {balancesOpen
+                                                                        ? <CloseCardBodyIcon/>
+                                                                        : <OpenCardBodyIcon/>
+                                                                    }
+                                                                </IconButton>
+                                                            </span>
                                                         </Tooltip>
                                                     </div>
                                                 }
@@ -233,15 +253,17 @@ export default function AccountCard(props: Props) {
                                                             title={signatoriesOpen ? 'Hide Signatories' : 'Show Signatories'}
                                                             placement={'top'}
                                                         >
-                                                            <IconButton
-                                                                size={'small'}
-                                                                onClick={() => setSignatoriesOpen(!signatoriesOpen)}
-                                                            >
-                                                                {signatoriesOpen
-                                                                    ? <CloseCardBodyIcon/>
-                                                                    : <OpenCardBodyIcon/>
-                                                                }
-                                                            </IconButton>
+                                                            <span>
+                                                                <IconButton
+                                                                    size={'small'}
+                                                                    onClick={() => setSignatoriesOpen(!signatoriesOpen)}
+                                                                >
+                                                                    {signatoriesOpen
+                                                                        ? <CloseCardBodyIcon/>
+                                                                        : <OpenCardBodyIcon/>
+                                                                    }
+                                                                </IconButton>
+                                                            </span>
                                                         </Tooltip>
                                                     </div>
                                                 }
