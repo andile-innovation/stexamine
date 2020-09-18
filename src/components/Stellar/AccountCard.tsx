@@ -6,7 +6,7 @@ import {
     CardHeader,
     Collapse, Grid,
     IconButton,
-    makeStyles,
+    makeStyles, TextField,
     Theme,
     Tooltip, Typography,
     useTheme
@@ -18,7 +18,7 @@ import numeral from 'numeral';
 import {useStellarContext} from 'context/Stellar';
 
 interface Props {
-    accountID: string;
+    accountID?: string;
     getRandomColorForKey?: (key: string) => string;
     label?: string;
     invertColors?: boolean;
@@ -39,6 +39,7 @@ export default function AccountCard(props: Props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [accountResponse, setAccountResponse] = useState<AccountResponse | undefined>(undefined)
+    const [accountID, setAccountID] = useState(props.accountID ? props.accountID : '')
     const [cardOpen, setCardOpen] = useState(false);
     const [balancesOpen, setBalancesOpen] = useState(false);
     const [signatoriesOpen, setSignatoriesOpen] = useState(false);
@@ -46,20 +47,20 @@ export default function AccountCard(props: Props) {
     const {stellarContextStellarClient} = useStellarContext();
 
     const color = props.getRandomColorForKey
-        ? props.getRandomColorForKey(props.accountID)
+        ? props.getRandomColorForKey(accountID)
         : theme.palette.text.primary
 
     useEffect(() => {
         (async () => {
             setLoading(true);
             try {
-                setAccountResponse(await stellarContextStellarClient.loadAccount(props.accountID))
+                setAccountResponse(await stellarContextStellarClient.loadAccount(accountID))
             } catch (e) {
                 console.error(`unable to get account from stellar: ${e}`);
             }
             setLoading(false);
         })()
-    }, [props.accountID, stellarContextStellarClient])
+    }, [props.accountID, stellarContextStellarClient, accountID])
 
     return (
         <Card className={cx({[classes.detailCard]: !!props.invertColors})}>
@@ -67,11 +68,22 @@ export default function AccountCard(props: Props) {
                 disableTypography
                 title={
                     <div className={classes.accountCardHeader}>
-                        <DisplayField
-                            label={props.label ? `${props.label} Account` : 'Account'}
-                            value={props.accountID}
-                            valueTypographyProps={{style: {color}}}
-                        />
+                        {props.accountID
+                            ? (
+                                <DisplayField
+                                    label={props.label ? `${props.label} Account` : 'Account'}
+                                    value={accountID}
+                                    valueTypographyProps={{style: {color}}}
+                                />
+                            )
+                            : (
+                                <TextField
+                                    label={'Account ID'}
+                                    value={accountID}
+                                    onChange={(e) => setAccountID(e.target.value)}
+                                />
+                            )
+                        }
                         <Tooltip
                             title={cardOpen ? 'Show Less' : 'Show More'}
                             placement={'top'}
