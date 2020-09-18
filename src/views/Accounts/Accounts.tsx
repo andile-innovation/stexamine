@@ -11,12 +11,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     root: {
         display: 'grid',
         gridTemplateColumns: 'auto',
-        gridRowGap: theme.spacing(1),
-        padding: theme.spacing(1)
-    },
-    cardHeaderTitleLayout: {
-        display: 'grid',
-        gridTemplateColumns: '1fr auto'
+        gridRowGap: theme.spacing(1)
     }
 }))
 
@@ -64,9 +59,8 @@ export default function Accounts() {
         <div className={classes.root}>
             {accountCards.map((card, idx) => (
                 <Card key={idx}>
-                    <CardHeader
-                        disableTypography
-                        title={
+                    <Grid container direction={'row'} alignItems={'center'} spacing={1}>
+                        <Grid item>
                             <Grid container>
                                 <Grid item>
                                     <Tooltip title={'Add Another Account Card'}>
@@ -78,22 +72,23 @@ export default function Accounts() {
                                         </IconButton>
                                     </Tooltip>
                                 </Grid>
-                                {!!idx && <Grid item>
+                                <Grid item>
                                     <Tooltip title={'Remove Account Card'}>
                                         <IconButton
                                             size={'small'}
+                                            disabled={!idx}
                                             onClick={handleRemoveAccountCard(idx)}
                                         >
                                             <DeleteAccountIcon/>
                                         </IconButton>
                                     </Tooltip>
-                                </Grid>}
+                                </Grid>
                             </Grid>
-                        }
-                    />
-                    <CardContent>
-                        {card}
-                    </CardContent>
+                        </Grid>
+                        <Grid item xs={11}>
+                            {card}
+                        </Grid>
+                    </Grid>
                 </Card>
             ))}
         </div>
