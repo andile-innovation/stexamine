@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react';
 import {getRandomColor} from 'utilities/color';
-import {Card, CardContent, CardHeader, Grid, IconButton, makeStyles, Theme, Tooltip} from '@material-ui/core';
+import {Card, Grid, IconButton, makeStyles, Theme, Tooltip} from '@material-ui/core';
 import {AccountCard} from 'components/Stellar';
 import {
     DeleteOutline as DeleteAccountIcon,
