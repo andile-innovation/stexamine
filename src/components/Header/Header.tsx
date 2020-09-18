@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
     makeStyles, Theme,
-    AppBar, Toolbar, useMediaQuery, useTheme, IconButton
+    AppBar, Toolbar, useMediaQuery, useTheme, IconButton, TextField, MenuItem
 } from '@material-ui/core';
 import {Breakpoint} from '@material-ui/core/styles/createBreakpoints';
 import {isWidthUp} from '@material-ui/core/withWidth';
@@ -12,6 +12,7 @@ import {
 import logo from 'assets/logo.png'
 import {publicRoutes} from 'route';
 import {useHistory} from 'react-router-dom';
+import {AllStellarNetworks, StellarNetwork, useStellarContext} from 'context/Stellar';
 
 const useStyles = makeStyles((theme: Theme) => ({
     appBar: {
@@ -29,6 +30,10 @@ const useStyles = makeStyles((theme: Theme) => ({
         height: '50px',
         minHeight: '50px',
         display: 'flex'
+    },
+    selectLedgerNetwork: {
+        paddingLeft: theme.spacing(1),
+        width: 150
     },
     sidebarMinimize: {
         float: 'left'
@@ -76,6 +81,10 @@ export default function Header(props: HeaderProps) {
     const width = useWidth();
     const [activeRouteName, setActiveRouteName] = useState('');
     const history = useHistory();
+    const {
+        stellarContextStellarNetwork,
+        stellarContextChangeStellarNetwork
+    } = useStellarContext();
 
     useEffect(() => {
         const activeAppRoute = publicRoutes.find((r) => (history.location.pathname === r.path))
@@ -104,6 +113,23 @@ export default function Header(props: HeaderProps) {
                     </div>
                     <div className={classes.desktopViewName}>
                         {activeRouteName ? `Stexamine - ${activeRouteName}` : 'Stexamine'}
+                    </div>
+                    <div className={classes.selectLedgerNetwork}>
+                        <TextField
+                            select
+                            fullWidth
+                            label={'Ledger Network'}
+                            value={stellarContextStellarNetwork}
+                            onChange={(e) => stellarContextChangeStellarNetwork(
+                                e.target.value as StellarNetwork
+                            )}
+                        >
+                            {AllStellarNetworks.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                     </div>
                 </Toolbar>
             </AppBar>

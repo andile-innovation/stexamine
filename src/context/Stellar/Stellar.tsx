@@ -1,16 +1,17 @@
 import React, {useContext, useState} from 'react';
+import {StellarNetwork} from '.';
 
 interface Context {
-    stellarContextStellarNetwork: string;
-    stellarContextChangeStellarNetwork: (newNetwork: string) => void;
+    stellarContextStellarNetwork: StellarNetwork;
+    stellarContextChangeStellarNetwork: (newNetwork: StellarNetwork) => void;
 }
 
 const Context = React.createContext({} as Context);
 
 const StellarContext: React.FC = ({children}: { children?: React.ReactNode }) => {
-    const [stellarNetwork, setStellarNetwork] = useState('https://horizon-testnet.stellar.org');
+    const [stellarNetwork, setStellarNetwork] = useState(StellarNetwork.TestNetwork);
 
-    const changeStellarNetwork = (newNetwork: string) => {
+    const changeStellarNetwork = (newNetwork: StellarNetwork) => {
         setStellarNetwork(newNetwork)
     }
 

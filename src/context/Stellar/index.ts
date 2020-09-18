@@ -1,4 +1,19 @@
-import AppContext, {useAppContext} from './Stellar';
+import AppContext, {useStellarContext} from './Stellar';
+
+enum StellarNetwork {
+    TestNetwork = 'Test',
+    PublicNetwork = 'Public'
+}
+
+const AllStellarNetworks: StellarNetwork[] = [
+    StellarNetwork.PublicNetwork,
+    StellarNetwork.TestNetwork
+]
 
 export default AppContext;
-export {useAppContext}
+
+export {
+    useStellarContext,
+    StellarNetwork,
+    AllStellarNetworks
+}
