@@ -9,6 +9,7 @@ import {
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
+        paddingTop: theme.spacing(1.5),
         display: 'grid',
         gridTemplateColumns: 'auto',
         gridRowGap: theme.spacing(1)
