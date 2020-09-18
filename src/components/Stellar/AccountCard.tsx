@@ -68,7 +68,7 @@ export default function AccountCard(props: Props) {
     }, [props.accountID, stellarContextStellarClient, accountID])
 
     stellarContextStellarClient.server
-        .accounts()
+        .payments()
         .cursor('now')
         .stream({
             onmessage: (record) => {
