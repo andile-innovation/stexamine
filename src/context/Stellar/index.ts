@@ -12,11 +12,11 @@ export const AllStellarNetworks: StellarNetwork[] = [
 
 export enum StellarHorizonURL {
     TestNetwork = 'https://horizon-testnet.stellar.org',
-    PublicNetwork = 'https://horizon-testnet.stellar.org',
+    PublicNetwork = 'https://horizon.stellar.org'
 }
 
 export default AppContext;
 
 export {
-    useStellarContext,
+    useStellarContext
 }

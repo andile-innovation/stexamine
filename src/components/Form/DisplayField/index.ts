@@ -1,3 +1,3 @@
-import DisplayField from "./DisplayField";
+import DisplayField from './DisplayField';
 
 export default DisplayField;

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Route as ReactRouterRoute, Switch, Redirect} from 'react-router';
 import {Route} from './Route';
-import {defaultRoute} from "./routes";
+import {defaultRoute} from './routes';
 
 interface RouterProps {
     routes: Route[];

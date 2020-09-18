@@ -80,6 +80,7 @@ export default function AccountCard(props: Props) {
                                 <TextField
                                     label={'Account ID'}
                                     value={accountID}
+                                    placeholder={'Enter an Account ID'}
                                     onChange={(e) => setAccountID(e.target.value)}
                                 />
                             )
@@ -107,6 +108,12 @@ export default function AccountCard(props: Props) {
                         if (loading) {
                             return (
                                 <div>loading...</div>
+                            )
+                        }
+
+                        if (!accountID) {
+                            return (
+                                <div>Enter an Account ID</div>
                             )
                         }
 
