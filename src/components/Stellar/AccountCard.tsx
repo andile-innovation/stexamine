@@ -102,7 +102,7 @@ export default function AccountCard(props: Props) {
         if (props.onAccountIDChange && accountID !== props.accountID) {
             props.onAccountIDChange(accountID);
         }
-    }, [accountID, props])
+    }, [accountID, props]);
 
     return (
         <Card className={cx({[classes.detailCard]: !!props.invertColors})}>
@@ -115,8 +115,10 @@ export default function AccountCard(props: Props) {
                             value={accountID}
                             placeholder={'Enter an Account ID'}
                             onChange={(e) => setAccountID(e.target.value)}
-                            InputProps={{readOnly: !props.editable}}
-                            style={{color}}
+                            InputProps={{
+                                readOnly: !props.editable,
+                                style: {color}
+                            }}
                         />
                         <Tooltip
                             title={accountCardOpen ? 'Show Less' : 'Show More'}
