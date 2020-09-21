@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface AccountRowData {
     accountID: string;
-    saved: boolean
+    save: boolean
 }
 
 export default function Accounts() {
@@ -51,11 +51,11 @@ export default function Accounts() {
             return;
         }
         try {
-            const retrievedAccountRowData: AccountRowData[] = [{accountID: '', saved: false}];
+            const retrievedAccountRowData: AccountRowData[] = [{accountID: '', save: false}];
             (JSON.parse(marshalledExistingSavedAccounts) as string[]).forEach((accountID) => {
                 retrievedAccountRowData.push({
                     accountID,
-                    saved: true
+                    save: true
                 })
             })
             setAccountRowData(retrievedAccountRowData);
@@ -76,9 +76,6 @@ export default function Accounts() {
         setAccountRowData(updatedAccountRowData);
     }
 
-    const handleSaveToLocalStorage = (accountRowDataIdxToSave: number) => () => {
-    }
-
     const handleAddAccountCard = (accountRowDataIdxToAddRowAfter: number) => () => {
         const updatedAccountRowData: AccountRowData[] = []
         accountRowData.forEach((a, idx) => {
@@ -86,12 +83,29 @@ export default function Accounts() {
             if (accountRowDataIdxToAddRowAfter === idx) {
                 updatedAccountRowData.push({
                     accountID: '',
-                    saved: false
+                    save: false
                 })
             }
         })
         setAccountRowData(updatedAccountRowData);
     }
+
+    const handleSaveToLocalStorage = (accountRowIdx: number) => () => {
+        const updatedAccountRowData: AccountRowData[] = []
+        accountRowData.forEach((a, idx) => {
+            if (accountRowIdx === idx) {
+                updatedAccountRowData.push({
+                    ...accountRowData[accountRowIdx],
+                    save: true
+                })
+                return;
+            }
+            updatedAccountRowData.push(a)
+        })
+        setAccountRowData(updatedAccountRowData);
+    }
+
+    console.log('acc', accountRowData)
 
     return (
         <div className={classes.root}>
