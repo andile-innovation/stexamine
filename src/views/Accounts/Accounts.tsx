@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'grid',
         gridTemplateColumns: 'auto 1fr',
         gridColumnGap: theme.spacing(1)
-    },
+    }
 }))
 
 interface AccountRowData {
@@ -27,10 +27,13 @@ interface AccountRowData {
     save: boolean
 }
 
+const viewLocalStorageDataKey = 'accounts-savedAccountIDs';
+
 export default function Accounts() {
     const classes = useStyles();
     const usedColors = useRef<{ [key: string]: string }>({})
     const [accountRowData, setAccountRowData] = useState<AccountRowData[]>([]);
+    const [initialLoadDone, setInitialLoadDone] = useState(false);
     const getRandomColorForKey = (key: string) => {
         // if a color is already stored for this key, use it
         if (usedColors.current[key]) {
@@ -45,23 +48,27 @@ export default function Accounts() {
 
     // load saved account IDs from local storage
     useEffect(() => {
-        const marshalledExistingSavedAccounts = localStorage.getItem('accounts-savedAccountIDs');
+        const marshalledExistingSavedAccounts = localStorage.getItem(viewLocalStorageDataKey);
         if (marshalledExistingSavedAccounts === null) {
-            localStorage.setItem('accounts-savedAccountIDs', JSON.stringify([]));
+            localStorage.setItem(viewLocalStorageDataKey, JSON.stringify([]));
             return;
         }
         try {
-            const retrievedAccountRowData: AccountRowData[] = [{accountID: '', save: false}];
+            const retrievedAccountRowData: AccountRowData[] = [];
             (JSON.parse(marshalledExistingSavedAccounts) as string[]).forEach((accountID) => {
                 retrievedAccountRowData.push({
                     accountID,
                     save: true
-                })
+                });
             })
+            if (!retrievedAccountRowData.length) {
+                retrievedAccountRowData.push({accountID: '', save: false});
+            }
             setAccountRowData(retrievedAccountRowData);
+            setInitialLoadDone(true);
         } catch (e) {
             console.error(`error parsing saved accounts from local storage: ${e.toString()}`);
-            localStorage.setItem('accounts-savedAccountIDs', JSON.stringify([]));
+            localStorage.setItem(viewLocalStorageDataKey, JSON.stringify([]));
         }
     }, [])
 
@@ -73,6 +80,9 @@ export default function Accounts() {
             }
             updatedAccountRowData.push(a)
         })
+        if (!updatedAccountRowData.length) {
+            updatedAccountRowData.push({accountID: '', save: false});
+        }
         setAccountRowData(updatedAccountRowData);
     }
 
@@ -87,6 +97,21 @@ export default function Accounts() {
                 })
             }
         })
+        setAccountRowData(updatedAccountRowData);
+    }
+
+    const handleAccountIDChange = (accountRowIdx: number) => (updatedID: string) => {
+        const updatedAccountRowData: AccountRowData[] = []
+        accountRowData.forEach((a, idx) => {
+            if (accountRowIdx === idx) {
+                updatedAccountRowData.push({
+                    accountID: updatedID,
+                    save: false
+                })
+                return;
+            }
+            updatedAccountRowData.push(a)
+        });
         setAccountRowData(updatedAccountRowData);
     }
 
@@ -105,7 +130,14 @@ export default function Accounts() {
         setAccountRowData(updatedAccountRowData);
     }
 
-    console.log('acc', accountRowData)
+    useEffect(() => {
+        if (!initialLoadDone) {
+            return;
+        }
+        localStorage.setItem(viewLocalStorageDataKey, JSON.stringify(
+            accountRowData.filter((a) => (a.save)).map((a) => (a.accountID)))
+        );
+    }, [accountRowData, initialLoadDone])
 
     return (
         <div className={classes.root}>
@@ -125,12 +157,15 @@ export default function Accounts() {
                             </Grid>
                             <Grid item>
                                 <Tooltip title={'Save To Local Storage'}>
-                                    <IconButton
-                                        size={'small'}
-                                        onClick={handleSaveToLocalStorage(idx)}
-                                    >
-                                        <SaveIcon/>
-                                    </IconButton>
+                                    <span>
+                                        <IconButton
+                                            size={'small'}
+                                            disabled={accRowData.save}
+                                            onClick={handleSaveToLocalStorage(idx)}
+                                        >
+                                            <SaveIcon/>
+                                        </IconButton>
+                                    </span>
                                 </Tooltip>
                             </Grid>
                             <Grid item>
@@ -138,7 +173,6 @@ export default function Accounts() {
                                         <span>
                                             <IconButton
                                                 size={'small'}
-                                                disabled={!idx}
                                                 onClick={handleRemoveAccountCard(idx)}
                                             >
                                                 <DeleteAccountIcon/>
@@ -151,6 +185,7 @@ export default function Accounts() {
                             <Grid item xs={12}>
                                 <AccountCard
                                     accountID={accRowData.accountID}
+                                    onAccountIDChange={handleAccountIDChange(idx)}
                                     getRandomColorForKey={getRandomColorForKey}
                                     editable
                                 />

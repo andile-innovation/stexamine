@@ -99,7 +99,7 @@ export default function AccountCard(props: Props) {
     // }, [accountID, stellarContextStellarClient.server])
 
     useEffect(() => {
-        if (props.onAccountIDChange) {
+        if (props.onAccountIDChange && accountID !== props.accountID) {
             props.onAccountIDChange(accountID);
         }
     }, [accountID, props])
