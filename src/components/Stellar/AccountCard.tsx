@@ -110,18 +110,24 @@ export default function AccountCard(props: Props) {
                 disableTypography
                 title={
                     <div className={classes.accountCardHeader}>
-                        <TextField
-                            label={'Account ID'}
-                            value={accountID}
-                            placeholder={'Enter an Account ID'}
-                            onChange={(e) => setAccountID(e.target.value)}
-                            InputProps={{
-                                readOnly: !props.editable,
-                                style: {
-                                    color: accountID ? color : undefined
-                                }
-                            }}
-                        />
+                        {props.editable
+                            ? (
+                                <TextField
+                                    label={'Account ID'}
+                                    value={accountID}
+                                    placeholder={'Enter an Account ID'}
+                                    onChange={(e) => setAccountID(e.target.value)}
+                                    InputProps={{style: {color: accountID ? color : undefined}}}
+                                />
+                            )
+                            : (
+                                <DisplayField
+                                    label={'Account ID'}
+                                    value={accountID}
+                                    valueTypographyProps={{style: {color}}}
+                                />
+                            )
+                        }
                         <Tooltip
                             title={accountCardOpen ? 'Show Less' : 'Show More'}
                             placement={'top'}
