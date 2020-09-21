@@ -22,7 +22,9 @@ import numeral from 'numeral';
 import {useStellarContext} from 'context/Stellar';
 
 interface Props {
+    editable?: boolean;
     accountID?: string;
+    onAccountIDChange?: (newAccountID: string) => void;
     getRandomColorForKey?: (key: string) => string;
     label?: string;
     invertColors?: boolean;
@@ -44,7 +46,7 @@ export default function AccountCard(props: Props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [accountResponse, setAccountResponse] = useState<AccountResponse | undefined>(undefined)
-    const [accountID, setAccountID] = useState(props.accountID ? props.accountID : 'GBEL5ZFRQ5CJSOJ4COBC6RDRE73PPY3NXBMKGLBKZ2QWTJLCHVAIAJGF')
+    const [accountID, setAccountID] = useState(props.accountID ? props.accountID : '')
     const [accountCardOpen, setAccountCardOpen] = useState(true);
     const [balancesOpen, setBalancesOpen] = useState(false);
     const [signatoriesOpen, setSignatoriesOpen] = useState(false);
@@ -96,29 +98,26 @@ export default function AccountCard(props: Props) {
         })();
     }, [accountID, stellarContextStellarClient.server])
 
+    useEffect(() => {
+        if (props.onAccountIDChange) {
+            props.onAccountIDChange(accountID);
+        }
+    }, [accountID, props])
+
     return (
         <Card className={cx({[classes.detailCard]: !!props.invertColors})}>
             <CardHeader
                 disableTypography
                 title={
                     <div className={classes.accountCardHeader}>
-                        {props.accountID
-                            ? (
-                                <DisplayField
-                                    label={props.label ? `${props.label} Account` : 'Account'}
-                                    value={accountID}
-                                    valueTypographyProps={{style: {color}}}
-                                />
-                            )
-                            : (
-                                <TextField
-                                    label={'Account ID'}
-                                    value={accountID}
-                                    placeholder={'Enter an Account ID'}
-                                    onChange={(e) => setAccountID(e.target.value)}
-                                />
-                            )
-                        }
+                        <TextField
+                            label={'Account ID'}
+                            value={accountID}
+                            placeholder={'Enter an Account ID'}
+                            onChange={(e) => setAccountID(e.target.value)}
+                            InputProps={{readOnly: !props.editable}}
+                            style={{color}}
+                        />
                         <Tooltip
                             title={accountCardOpen ? 'Show Less' : 'Show More'}
                             placement={'top'}
