@@ -22,10 +22,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }))
 
+interface AccountRowData {
+    accountID: string;
+    saved: boolean
+}
+
 export default function Accounts() {
     const classes = useStyles();
     const usedColors = useRef<{ [key: string]: string }>({})
-    const [accountIDs, setAccountIDs] = useState<{[key: string]: boolean}>({});
+    const [accountRowData, setAccountRowData] = useState<AccountRowData[]>([]);
     const getRandomColorForKey = (key: string) => {
         // if a color is already stored for this key, use it
         if (usedColors.current[key]) {
@@ -46,57 +51,51 @@ export default function Accounts() {
             return;
         }
         try {
-            const retrievedAccountIDs: {[key: string]: boolean} = {'': false};
-            (JSON.parse(marshalledExistingSavedAccounts) as string[]).forEach((accID) => {
-                retrievedAccountIDs[accID] = true;
+            const retrievedAccountRowData: AccountRowData[] = [{accountID: '', saved: false}];
+            (JSON.parse(marshalledExistingSavedAccounts) as string[]).forEach((accountID) => {
+                retrievedAccountRowData.push({
+                    accountID,
+                    saved: true
+                })
             })
-            setAccountIDs(retrievedAccountIDs);
+            setAccountRowData(retrievedAccountRowData);
         } catch (e) {
             console.error(`error parsing saved accounts from local storage: ${e.toString()}`);
             localStorage.setItem('accounts-savedAccountIDs', JSON.stringify([]));
         }
     }, [])
 
-    const [accountCards, setAccountCards] = useState<React.ReactNode[]>([
-        <AccountCard
-            getRandomColorForKey={getRandomColorForKey}
-            editable
-        />
-    ]);
-
-    const handleRemoveAccountCard = (cardIdxToRemove: number) => () => {
-        setAccountCards(accountCards.filter((_, i) => (i !== cardIdxToRemove)));
+    const handleRemoveAccountCard = (accountRowDataIdxToRemove: number) => () => {
+        const updatedAccountRowData: AccountRowData[] = []
+        accountRowData.forEach((a, idx) => {
+            if (accountRowDataIdxToRemove === idx) {
+                return;
+            }
+            updatedAccountRowData.push(a)
+        })
+        setAccountRowData(updatedAccountRowData);
     }
 
-    const handleSaveToLocalStorage = (cardToSaveIdx: number) => () => {
-
+    const handleSaveToLocalStorage = (accountRowDataIdxToSave: number) => () => {
     }
 
-    const handleAddAccountCard = (idxToAddCardAfter: number) => () => {
-        const updatedAccountCards: React.ReactNode[] = [];
-        accountCards.forEach((card, idx) => {
-            updatedAccountCards.push(card);
-            if (idx === idxToAddCardAfter) {
-                updatedAccountCards.push(
-                    <AccountCard
-                        getRandomColorForKey={getRandomColorForKey}
-                        editable
-                    />
-                );
+    const handleAddAccountCard = (accountRowDataIdxToAddRowAfter: number) => () => {
+        const updatedAccountRowData: AccountRowData[] = []
+        accountRowData.forEach((a, idx) => {
+            updatedAccountRowData.push(a)
+            if (accountRowDataIdxToAddRowAfter === idx) {
+                updatedAccountRowData.push({
+                    accountID: '',
+                    saved: false
+                })
             }
         })
-        setAccountCards(updatedAccountCards);
+        setAccountRowData(updatedAccountRowData);
     }
-
-    useEffect(() => {
-        console.log('changed!', accountIDs)
-    }, [accountIDs])
-
-    console.log('account IDs: ', accountIDs);
 
     return (
         <div className={classes.root}>
-            {Object.keys(accountIDs).map((accID, idx) => (
+            {accountRowData.map((accRowData, idx) => (
                 <Card key={idx}>
                     <div className={classes.cardContent}>
                         <Grid container direction={'row'} alignItems={'center'} spacing={1}>
@@ -137,7 +136,9 @@ export default function Accounts() {
                         <Grid container>
                             <Grid item xs={12}>
                                 <AccountCard
-                                    accountID={accID}
+                                    accountID={accRowData.accountID}
+                                    getRandomColorForKey={getRandomColorForKey}
+                                    editable
                                 />
                             </Grid>
                         </Grid>
