@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function Accounts() {
     const classes = useStyles();
     const usedColors = useRef<{ [key: string]: string }>({})
-    const [savedAccountIDs, setSavedAccountIDs] = useState<string[]>([]);
+    const [accountIDs, setAccountIDs] = useState<{[key: string]: boolean}>({});
     const getRandomColorForKey = (key: string) => {
         // if a color is already stored for this key, use it
         if (usedColors.current[key]) {
@@ -46,16 +46,16 @@ export default function Accounts() {
             return;
         }
         try {
-            setSavedAccountIDs(JSON.parse(marshalledExistingSavedAccounts));
+            const retrievedAccountIDs: {[key: string]: boolean} = {'': false};
+            (JSON.parse(marshalledExistingSavedAccounts) as string[]).forEach((accID) => {
+                retrievedAccountIDs[accID] = true;
+            })
+            setAccountIDs(retrievedAccountIDs);
         } catch (e) {
             console.error(`error parsing saved accounts from local storage: ${e.toString()}`);
+            localStorage.setItem('accounts-savedAccountIDs', JSON.stringify([]));
         }
     }, [])
-
-    // each time the savedAccountIDs list changes update the local storage
-    useEffect(() => {
-        localStorage.setItem('accounts-savedAccountIDs', JSON.stringify(savedAccountIDs));
-    }, [savedAccountIDs])
 
     const [accountCards, setAccountCards] = useState<React.ReactNode[]>([
         <AccountCard
@@ -88,11 +88,15 @@ export default function Accounts() {
         setAccountCards(updatedAccountCards);
     }
 
-    console.log('saved accounts: ', savedAccountIDs);
+    useEffect(() => {
+        console.log('changed!', accountIDs)
+    }, [accountIDs])
+
+    console.log('account IDs: ', accountIDs);
 
     return (
         <div className={classes.root}>
-            {accountCards.map((card, idx) => (
+            {Object.keys(accountIDs).map((accID, idx) => (
                 <Card key={idx}>
                     <div className={classes.cardContent}>
                         <Grid container direction={'row'} alignItems={'center'} spacing={1}>
@@ -132,7 +136,9 @@ export default function Accounts() {
                         </Grid>
                         <Grid container>
                             <Grid item xs={12}>
-                                {card}
+                                <AccountCard
+                                    accountID={accID}
+                                />
                             </Grid>
                         </Grid>
                     </div>

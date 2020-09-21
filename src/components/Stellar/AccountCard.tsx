@@ -85,18 +85,18 @@ export default function AccountCard(props: Props) {
     //         }
     //     }) // CloseFunction
 
-    useEffect(() => {
-        (async () => {
-            try {
-                await stellarContextStellarClient.server
-                    .operations() // PaymentCallBuilder
-                    .forAccount(accountID) // CallBuilder
-                    .call();
-            } catch (e) {
-                console.error(`error getting operations: ${e}`);
-            }
-        })();
-    }, [accountID, stellarContextStellarClient.server])
+    // useEffect(() => {
+    //     (async () => {
+    //         try {
+    //             await stellarContextStellarClient.server
+    //                 .operations() // PaymentCallBuilder
+    //                 .forAccount(accountID) // CallBuilder
+    //                 .call();
+    //         } catch (e) {
+    //             console.error(`error getting operations: ${e}`);
+    //         }
+    //     })();
+    // }, [accountID, stellarContextStellarClient.server])
 
     useEffect(() => {
         if (props.onAccountIDChange) {
