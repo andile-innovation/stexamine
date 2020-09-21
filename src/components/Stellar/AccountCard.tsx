@@ -1,4 +1,4 @@
-import {AccountResponse, ServerApi} from 'stellar-sdk';
+import {AccountResponse} from 'stellar-sdk';
 import React, {useEffect, useState} from 'react';
 import {
     Card,
@@ -12,7 +12,11 @@ import {
     useTheme
 } from '@material-ui/core';
 import {DisplayField} from 'components/Form';
-import {ExpandLess as CloseCardBodyIcon, ExpandMore as OpenCardBodyIcon} from '@material-ui/icons';
+import {
+    ExpandLess as CloseCardBodyIcon,
+    ExpandMore as OpenCardBodyIcon,
+    Refresh as RefreshIcon
+} from '@material-ui/icons';
 import cx from 'classnames';
 import numeral from 'numeral';
 import {useStellarContext} from 'context/Stellar';
@@ -27,15 +31,14 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) => ({
     accountCardHeader: {
         display: 'grid',
-        gridTemplateColumns: '1fr auto',
+        gridTemplateColumns: '1fr auto auto',
+        gridColumnGap: theme.spacing(1),
         alignItems: 'center'
     },
     detailCard: {
         backgroundColor: theme.palette.background.default
     }
 }));
-
-// curl -H "Accept: text/event-stream" "https://horizon-testnet.stellar.org/accounts/GB7JFK56QXQ4DVJRNPDBXABNG3IVKIXWWJJRJICHRU22Z5R5PI65GAK3/payments"
 
 export default function AccountCard(props: Props) {
     const classes = useStyles();
@@ -48,6 +51,7 @@ export default function AccountCard(props: Props) {
     const [transactionsOpen, setTransactionsOpen] = useState(false);
     const theme = useTheme();
     const {stellarContextStellarClient} = useStellarContext();
+    const [refreshToggle, setRefreshToggle] = useState(false);
 
     const color = props.getRandomColorForKey
         ? props.getRandomColorForKey(accountID)
@@ -66,7 +70,7 @@ export default function AccountCard(props: Props) {
             }
             setLoading(false);
         })()
-    }, [props.accountID, stellarContextStellarClient, accountID])
+    }, [props.accountID, stellarContextStellarClient, accountID, refreshToggle])
 
     // stellarContextStellarClient.server
     //     .operations() // PaymentCallBuilder
@@ -128,6 +132,20 @@ export default function AccountCard(props: Props) {
                                         ? <CloseCardBodyIcon/>
                                         : <OpenCardBodyIcon/>
                                     }
+                                </IconButton>
+                            </span>
+                        </Tooltip>
+                        <Tooltip
+                            title={'Refresh'}
+                            placement={'top'}
+                        >
+                            <span>
+                                <IconButton
+                                    size={'small'}
+                                    disabled={loading}
+                                    onClick={() => setRefreshToggle(!refreshToggle)}
+                                >
+                                    <RefreshIcon/>
                                 </IconButton>
                             </span>
                         </Tooltip>
@@ -344,7 +362,7 @@ export default function AccountCard(props: Props) {
                                                             <span>
                                                                 <IconButton
                                                                     size={'small'}
-                                                                    onClick={() =>setTransactionsOpen(!transactionsOpen)}
+                                                                    onClick={() => setTransactionsOpen(!transactionsOpen)}
                                                                 >
                                                                     {transactionsOpen
                                                                         ? <CloseCardBodyIcon/>
@@ -357,7 +375,7 @@ export default function AccountCard(props: Props) {
                                                 }
                                             />
                                             <Collapse in={transactionsOpen}>
-                                                <CardContent >
+                                                <CardContent>
                                                     <DisplayField
                                                         label={'Stfu'}
                                                         value={'too'}
