@@ -117,7 +117,9 @@ export default function AccountCard(props: Props) {
                             onChange={(e) => setAccountID(e.target.value)}
                             InputProps={{
                                 readOnly: !props.editable,
-                                style: {color}
+                                style: {
+                                    color: accountID ? color : undefined
+                                }
                             }}
                         />
                         <Tooltip
@@ -378,8 +380,8 @@ export default function AccountCard(props: Props) {
                                             <Collapse in={transactionsOpen}>
                                                 <CardContent>
                                                     <DisplayField
-                                                        label={'Stfu'}
-                                                        value={'too'}
+                                                        label={'Good things here'}
+                                                        value={'are coming...'}
                                                     />
                                                 </CardContent>
                                             </Collapse>
