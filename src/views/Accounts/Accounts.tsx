@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {getRandomColor} from 'utilities/color';
-import {Card, CardContent, Grid, IconButton, makeStyles, Theme, Tooltip} from '@material-ui/core';
+import {Card, Grid, IconButton, makeStyles, Theme, Tooltip} from '@material-ui/core';
 import {AccountCard} from 'components/Stellar';
 import {
     DeleteOutline as DeleteAccountIcon,
@@ -60,6 +60,7 @@ export default function Accounts() {
     const [accountCards, setAccountCards] = useState<React.ReactNode[]>([
         <AccountCard
             getRandomColorForKey={getRandomColorForKey}
+            editable
         />
     ]);
 
@@ -79,6 +80,7 @@ export default function Accounts() {
                 updatedAccountCards.push(
                     <AccountCard
                         getRandomColorForKey={getRandomColorForKey}
+                        editable
                     />
                 );
             }
@@ -92,30 +94,30 @@ export default function Accounts() {
         <div className={classes.root}>
             {accountCards.map((card, idx) => (
                 <Card key={idx}>
-                   <div className={classes.cardContent}>
-                       <Grid container direction={'row'} alignItems={'center'} spacing={1}>
-                           <Grid item>
-                               <Tooltip title={'Add Another Account Card'}>
-                                   <IconButton
-                                       size={'small'}
-                                       onClick={handleAddAccountCard(idx)}
-                                   >
-                                       <AddAccountIcon/>
-                                   </IconButton>
-                               </Tooltip>
-                           </Grid>
-                           <Grid item>
-                               <Tooltip title={'Save To Local Storage'}>
-                                   <IconButton
-                                       size={'small'}
-                                       onClick={handleSaveToLocalStorage(idx)}
-                                   >
-                                       <SaveIcon/>
-                                   </IconButton>
-                               </Tooltip>
-                           </Grid>
-                           <Grid item>
-                               <Tooltip title={'Remove Account Card'}>
+                    <div className={classes.cardContent}>
+                        <Grid container direction={'row'} alignItems={'center'} spacing={1}>
+                            <Grid item>
+                                <Tooltip title={'Add Another Account Card'}>
+                                    <IconButton
+                                        size={'small'}
+                                        onClick={handleAddAccountCard(idx)}
+                                    >
+                                        <AddAccountIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                            <Grid item>
+                                <Tooltip title={'Save To Local Storage'}>
+                                    <IconButton
+                                        size={'small'}
+                                        onClick={handleSaveToLocalStorage(idx)}
+                                    >
+                                        <SaveIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                            <Grid item>
+                                <Tooltip title={'Remove Account Card'}>
                                         <span>
                                             <IconButton
                                                 size={'small'}
@@ -125,15 +127,15 @@ export default function Accounts() {
                                                 <DeleteAccountIcon/>
                                             </IconButton>
                                         </span>
-                               </Tooltip>
-                           </Grid>
-                       </Grid>
-                       <Grid container>
-                           <Grid item xs={12}>
-                               {card}
-                           </Grid>
-                       </Grid>
-                   </div>
+                                </Tooltip>
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={12}>
+                                {card}
+                            </Grid>
+                        </Grid>
+                    </div>
                 </Card>
             ))}
         </div>
