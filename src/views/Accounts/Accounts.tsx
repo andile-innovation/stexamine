@@ -175,7 +175,7 @@ export default function Accounts() {
             {accountRowData.map((accRowData, idx) => (
                 <Card key={idx}>
                     <div className={classes.cardContent}>
-                        <Grid container direction={'row'} alignItems={'center'} spacing={1}>
+                        <Grid container direction={'row'} alignItems={'center'}>
                             <Grid item>
                                 <Tooltip title={'Add Another'}>
                                     <IconButton
