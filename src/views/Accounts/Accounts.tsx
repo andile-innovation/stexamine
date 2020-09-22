@@ -1,11 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
 import {getRandomColor} from 'utilities/color';
-import {Card, Grid, IconButton, makeStyles, Theme, Tooltip} from '@material-ui/core';
+import {Card, Grid, IconButton, Input, makeStyles, Theme, Tooltip} from '@material-ui/core';
 import {AccountCard} from 'components/Stellar';
 import {
     DeleteOutline as DeleteAccountIcon,
     Add as AddAccountIcon,
-    Save as SaveIcon
+    Save as SaveIcon,
+    NoteAdd as AddDescriptionIcon,
+    Backspace as RemoveDescriptionIcon
 } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -19,11 +21,19 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'grid',
         gridTemplateColumns: 'auto 1fr',
         gridColumnGap: theme.spacing(1)
+    },
+    accountDescription: {
+        marginTop: theme.spacing(1),
+        marginLeft: theme.spacing(1)
     }
 }))
 
-interface AccountRowData {
+interface StoredAccountRowData {
     accountID: string;
+    accountDescription?: string;
+}
+
+interface AccountRowData extends StoredAccountRowData {
     save: boolean
 }
 
@@ -55,9 +65,9 @@ export default function Accounts() {
         }
         try {
             const retrievedAccountRowData: AccountRowData[] = [];
-            (JSON.parse(marshalledExistingSavedAccounts) as string[]).forEach((accountID) => {
+            (JSON.parse(marshalledExistingSavedAccounts) as StoredAccountRowData[]).forEach((storedAccRowData) => {
                 retrievedAccountRowData.push({
-                    accountID,
+                    ...storedAccRowData,
                     save: true
                 });
             })
@@ -84,6 +94,21 @@ export default function Accounts() {
             updatedAccountRowData.push({accountID: '', save: false});
         }
         setAccountRowData(updatedAccountRowData);
+    }
+
+    const handleAddADescription = (accountRowDataIdxToAddDescription: number) => () => {
+        accountRowData[accountRowDataIdxToAddDescription].accountDescription = '';
+        setAccountRowData([...accountRowData]);
+    }
+
+    const handleRemoveADescription = (accountRowDataIdxToAddDescription: number) => () => {
+        accountRowData[accountRowDataIdxToAddDescription].accountDescription = undefined;
+        setAccountRowData([...accountRowData]);
+    }
+
+    const handleChangeDescription = (accountRowDataIdxToAddDescription: number) => (e: ChangeEvent<HTMLInputElement>) => {
+        accountRowData[accountRowDataIdxToAddDescription].accountDescription = e.target.value;
+        setAccountRowData([...accountRowData]);
     }
 
     const handleAddAccountCard = (accountRowDataIdxToAddRowAfter: number) => () => {
@@ -135,7 +160,13 @@ export default function Accounts() {
             return;
         }
         localStorage.setItem(viewLocalStorageDataKey, JSON.stringify(
-            accountRowData.filter((a) => (a.save)).map((a) => (a.accountID)))
+            accountRowData.filter((a) => (a.save)).map((a) => {
+                const storedRowData: StoredAccountRowData = {accountID: a.accountID}
+                if (a.accountDescription) {
+                    storedRowData.accountDescription = a.accountDescription;
+                }
+                return storedRowData;
+            }))
         );
     }, [accountRowData, initialLoadDone])
 
@@ -180,8 +211,46 @@ export default function Accounts() {
                                         </span>
                                 </Tooltip>
                             </Grid>
+                            <Grid item>
+                                {(accRowData.accountDescription === undefined)
+                                    ? (
+                                        <Tooltip title={'Add a Description'}>
+                                            <span>
+                                                <IconButton
+                                                    size={'small'}
+                                                    onClick={handleAddADescription(idx)}
+                                                >
+                                                    <AddDescriptionIcon/>
+                                                </IconButton>
+                                            </span>
+                                        </Tooltip>
+                                    )
+                                    : (
+                                        <Tooltip title={'Remove Description'}>
+                                            <span>
+                                                <IconButton
+                                                    size={'small'}
+                                                    onClick={handleRemoveADescription(idx)}
+                                                >
+                                                    <RemoveDescriptionIcon/>
+                                                </IconButton>
+                                            </span>
+                                        </Tooltip>
+                                    )
+                                }
+                            </Grid>
                         </Grid>
                         <Grid container>
+                            {(accRowData.accountDescription !== undefined) &&
+                            <Grid item>
+                                <Input
+                                    className={classes.accountDescription}
+                                    margin={'dense'}
+                                    placeholder={'Add a description'}
+                                    value={accRowData.accountDescription}
+                                    onChange={handleChangeDescription(idx)}
+                                />
+                            </Grid>}
                             <Grid item xs={12}>
                                 <AccountCard
                                     accountID={accRowData.accountID}
