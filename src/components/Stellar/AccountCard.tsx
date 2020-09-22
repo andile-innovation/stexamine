@@ -1,5 +1,5 @@
 import {AccountResponse} from 'stellar-sdk';
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
 import {
     Card,
     CardContent,
@@ -41,6 +41,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
+function usePrevious(value: any) {
+    const ref = useRef();
+    useEffect(() => {
+        ref.current = value;
+    });
+    return ref.current;
+}
+
 export default function AccountCard(props: Props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
@@ -53,6 +61,7 @@ export default function AccountCard(props: Props) {
     const theme = useTheme();
     const {stellarContextStellarClient} = useStellarContext();
     const [refreshToggle, setRefreshToggle] = useState(false);
+    const prevPropsAccountID = usePrevious(props.accountID);
 
     const color = props.getRandomColorForKey
         ? props.getRandomColorForKey(accountID)
@@ -97,11 +106,13 @@ export default function AccountCard(props: Props) {
     //     })();
     // }, [accountID, stellarContextStellarClient.server])
 
-    useEffect(() => {
-        if (props.onAccountIDChange && accountID !== props.accountID) {
-            props.onAccountIDChange(accountID);
+    const handleAccountIDChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setAccountID(e.target.value);
+        if (props.onAccountIDChange) {
+            console.log('ahcnage!!')
+            props.onAccountIDChange(e.target.value);
         }
-    }, [accountID, props]);
+    }
 
     return (
         <Card className={cx({[classes.detailCard]: !!props.invertColors})}>
@@ -115,7 +126,7 @@ export default function AccountCard(props: Props) {
                                     label={'Account ID'}
                                     value={accountID}
                                     placeholder={'Enter an Account ID'}
-                                    onChange={(e) => setAccountID(e.target.value)}
+                                    onChange={handleAccountIDChange}
                                     InputProps={{style: {color: accountID ? color : undefined}}}
                                 />
                             )

@@ -55,6 +55,7 @@ export default function Accounts() {
 
     // load saved account IDs from local storage
     useEffect(() => {
+        console.log('do!')
         const marshalledExistingSavedAccounts = localStorage.getItem(viewLocalStorageDataKey);
         if (marshalledExistingSavedAccounts === null) {
             localStorage.setItem(viewLocalStorageDataKey, JSON.stringify([]));
@@ -113,10 +114,7 @@ export default function Accounts() {
         accountRowData.forEach((a, idx) => {
             updatedAccountRowData.push(a)
             if (accountRowDataIdxToAddRowAfter === idx) {
-                updatedAccountRowData.push({
-                    accountID: '',
-                    save: false
-                })
+                updatedAccountRowData.push({accountID: '', save: false})
             }
         })
         setAccountRowData(updatedAccountRowData);
@@ -128,6 +126,7 @@ export default function Accounts() {
             if (accountRowIdx === idx) {
                 updatedAccountRowData.push({
                     accountID: updatedID,
+                    accountDescription: a.accountDescription,
                     save: false
                 })
                 return;
@@ -166,6 +165,8 @@ export default function Accounts() {
             }))
         );
     }, [accountRowData, initialLoadDone])
+
+    console.log(accountRowData)
 
     return (
         <Grid container className={classes.root} spacing={1}>
