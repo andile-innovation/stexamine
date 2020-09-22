@@ -170,7 +170,7 @@ export default function Accounts() {
     return (
         <Grid container className={classes.root} spacing={1}>
             {accountRowData.map((accRowData, idx) => (
-                <Grid item key={idx} xs={12}>
+                <Grid item key={idx} xs={6}>
                     <Card>
                         <div className={classes.cardContent}>
                             <Grid container direction={'row'} alignItems={'center'}>
