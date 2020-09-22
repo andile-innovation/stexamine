@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     accountCardHeader: {
         display: 'grid',
         gridTemplateColumns: '1fr auto auto',
-        gridColumnGap: theme.spacing(1),
         alignItems: 'center'
     },
     detailCard: {
