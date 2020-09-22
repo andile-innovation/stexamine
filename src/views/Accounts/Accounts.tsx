@@ -177,7 +177,7 @@ export default function Accounts() {
                     <div className={classes.cardContent}>
                         <Grid container direction={'row'} alignItems={'center'} spacing={1}>
                             <Grid item>
-                                <Tooltip title={'Add Another Account Card'}>
+                                <Tooltip title={'Add Another'}>
                                     <IconButton
                                         size={'small'}
                                         onClick={handleAddAccountCard(idx)}
@@ -187,7 +187,12 @@ export default function Accounts() {
                                 </Tooltip>
                             </Grid>
                             <Grid item>
-                                <Tooltip title={'Save To Local Storage'}>
+                                <Tooltip
+                                    title={accRowData.save
+                                        ? 'Already Saved'
+                                        : 'Save To Local Storage'
+                                    }
+                                >
                                     <span>
                                         <IconButton
                                             size={'small'}
@@ -200,7 +205,12 @@ export default function Accounts() {
                                 </Tooltip>
                             </Grid>
                             <Grid item>
-                                <Tooltip title={'Remove Account Card'}>
+                                <Tooltip
+                                    title={accRowData.save
+                                        ? 'Remove From Storage'
+                                        : 'Remove'
+                                    }
+                                >
                                         <span>
                                             <IconButton
                                                 size={'small'}
