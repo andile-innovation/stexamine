@@ -61,6 +61,7 @@ export default function AccountCard(props: Props) {
     const theme = useTheme();
     const {stellarContextStellarClient} = useStellarContext();
     const [refreshToggle, setRefreshToggle] = useState(false);
+    const prevAccountID = usePrevious(accountID);
     const prevPropsAccountID = usePrevious(props.accountID);
 
     const color = props.getRandomColorForKey
@@ -109,10 +110,20 @@ export default function AccountCard(props: Props) {
     const handleAccountIDChange = (e: ChangeEvent<HTMLInputElement>) => {
         setAccountID(e.target.value);
         if (props.onAccountIDChange) {
-            console.log('ahcnage!!')
             props.onAccountIDChange(e.target.value);
         }
     }
+
+
+    // this hook checks if the account id is externally changed
+    useEffect(() => {
+        if (
+            (props.accountID !== prevPropsAccountID) &&
+            (accountID === prevAccountID)
+        ) {
+            setAccountID(props.accountID);
+        }
+    }, [props.accountID, prevPropsAccountID, accountID, prevAccountID])
 
     return (
         <Card className={cx({[classes.detailCard]: !!props.invertColors})}>

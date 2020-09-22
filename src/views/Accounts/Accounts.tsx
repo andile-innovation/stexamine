@@ -55,7 +55,6 @@ export default function Accounts() {
 
     // load saved account IDs from local storage
     useEffect(() => {
-        console.log('do!')
         const marshalledExistingSavedAccounts = localStorage.getItem(viewLocalStorageDataKey);
         if (marshalledExistingSavedAccounts === null) {
             localStorage.setItem(viewLocalStorageDataKey, JSON.stringify([]));
@@ -165,8 +164,6 @@ export default function Accounts() {
             }))
         );
     }, [accountRowData, initialLoadDone])
-
-    console.log(accountRowData)
 
     return (
         <Grid container className={classes.root} spacing={1}>
