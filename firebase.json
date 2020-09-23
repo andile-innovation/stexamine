@@ -1,7 +1,6 @@
 {
   "hosting": {
     "public": "build",
-    "site": "stexamine",
     "ignore": [
       "firebase.json",
       "**/.*",
