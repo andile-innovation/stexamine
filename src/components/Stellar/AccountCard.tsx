@@ -51,7 +51,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         overflow: 'auto'
     },
     headerRowCell: {
-        fontSize: 12
+        fontSize: 12,
+        padding: theme.spacing(0.5, 1, 0.5, 0)
     },
     tableRowCell: {
         padding: theme.spacing(0.5, 1, 0.5, 0),
@@ -76,6 +77,8 @@ function usePrevious(value: any) {
     });
     return ref.current;
 }
+
+const tableHeight = 200
 
 export default function AccountCard(props: Props) {
     const classes = useStyles();
@@ -244,30 +247,31 @@ export default function AccountCard(props: Props) {
                                             <div
                                                 className={classes.tableWrapper}
                                                 style={{
-                                                    height: 100,
+                                                    height: tableHeight,
                                                     width: props.maxWidth
                                                 }}
                                             >
                                                 <Table stickyHeader padding={'none'}>
                                                     <TableHead>
                                                         <TableRow>
-                                                            <TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
                                                                 Code
                                                             </TableCell>
                                                             <TableCell
+                                                                className={classes.headerRowCell}
                                                                 onClick={() => {
                                                                     setExpandIssuerColumn(!expandIssuerColumn);
                                                                 }}
                                                             >
                                                                 Issuer
                                                             </TableCell>
-                                                            <TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
                                                                 Balance
                                                             </TableCell>
-                                                            <TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
                                                                 Limit
                                                             </TableCell>
-                                                            <TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
                                                                 Authorised
                                                             </TableCell>
                                                         </TableRow>
@@ -279,27 +283,27 @@ export default function AccountCard(props: Props) {
                                                                     return (
                                                                         <TableRow key={idx}>
                                                                             <TableCell
-                                                                                className={classes.headerRowCell}
+                                                                                className={classes.tableRowCell}
                                                                                 style={{color: colorContextGetRandomColorForKey('XLM')}}
                                                                             >
                                                                                 XLM
                                                                             </TableCell>
                                                                             <TableCell
-                                                                                className={classes.headerRowCell}>
+                                                                                className={classes.tableRowCell}>
                                                                                 -
                                                                             </TableCell>
                                                                             <TableCell
-                                                                                className={classes.headerRowCell}
+                                                                                className={classes.tableRowCell}
                                                                                 style={{color: colorContextGetRandomColorForKey('XLM')}}
                                                                             >
                                                                                 {numeral(bal.balance).format('0,0.0000000')}
                                                                             </TableCell>
                                                                             <TableCell
-                                                                                className={classes.headerRowCell}>
+                                                                                className={classes.tableRowCell}>
                                                                                 -
                                                                             </TableCell>
                                                                             <TableCell
-                                                                                className={classes.headerRowCell}>
+                                                                                className={classes.tableRowCell}>
                                                                                 -
                                                                             </TableCell>
                                                                         </TableRow>
@@ -364,40 +368,55 @@ export default function AccountCard(props: Props) {
                                         <AccordionSummary expandIcon={<OpenCardBodyIcon/>}>
                                             <Typography>Signatories</Typography>
                                         </AccordionSummary>
-                                        <AccordionDetails>
-                                            <div>
-                                                {accountResponse.signers.map((s, idx) => (
-                                                    <div key={idx}>
-                                                        <DisplayField
-                                                            label={'Public Key'}
-                                                            labelTypographyProps={{
-                                                                style: {
-                                                                    color: colorContextGetRandomColorForKey(s.key)
-                                                                }
-                                                            }}
-                                                            valueTypographyProps={{
-                                                                style: {
-                                                                    color: colorContextGetRandomColorForKey(s.key)
-                                                                }
-                                                            }}
-                                                            value={s.key}
-                                                        />
-                                                        <DisplayField
-                                                            label={'Weight'}
-                                                            labelTypographyProps={{
-                                                                style: {
-                                                                    color: colorContextGetRandomColorForKey(s.key)
-                                                                }
-                                                            }}
-                                                            valueTypographyProps={{
-                                                                style: {
-                                                                    color: colorContextGetRandomColorForKey(s.key)
-                                                                }
-                                                            }}
-                                                            value={s.weight.toString()}
-                                                        />
-                                                    </div>
-                                                ))}
+                                        <AccordionDetails className={classes.balanceDetails}>
+                                            <div
+                                                className={classes.tableWrapper}
+                                                style={{
+                                                    height: tableHeight,
+                                                    width: props.maxWidth
+                                                }}
+                                            >
+                                                <Table stickyHeader padding={'none'}>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Signatory
+                                                            </TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Weight
+                                                            </TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Type
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {accountResponse.signers.map((bal, idx) => {
+                                                            return (
+                                                                <TableRow key={idx}>
+                                                                    <TableCell
+                                                                        className={classes.tableRowCell}
+                                                                        style={{color: colorContextGetRandomColorForKey(bal.key)}}
+                                                                    >
+                                                                        {bal.key}
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        className={classes.tableRowCell}
+                                                                        style={{color: colorContextGetRandomColorForKey(bal.key)}}
+                                                                    >
+                                                                        {bal.weight}
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        className={classes.tableRowCell}
+                                                                        style={{color: colorContextGetRandomColorForKey(bal.key)}}
+                                                                    >
+                                                                        {bal.type}
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            )
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
                                             </div>
                                         </AccordionDetails>
                                     </Accordion>
