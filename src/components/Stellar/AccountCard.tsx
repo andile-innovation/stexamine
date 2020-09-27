@@ -240,8 +240,11 @@ export default function AccountCard(props: Props) {
                                     />
 
                                     <Accordion className={classes.backgroundColor}>
-                                        <AccordionSummary expandIcon={<OpenCardBodyIcon/>}>
-                                            <Typography>Balances</Typography>
+                                        <AccordionSummary
+                                            expandIcon={<OpenCardBodyIcon/>}>
+                                            <Typography
+                                                children={'Balances'}
+                                            />
                                         </AccordionSummary>
                                         <AccordionDetails className={classes.balanceDetails}>
                                             <div
