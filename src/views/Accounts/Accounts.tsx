@@ -96,7 +96,10 @@ export default function Accounts() {
             }
             updatedAccountRowData.push(a)
         })
-        if (!updatedAccountRowData.length) {
+        const noAccountsOnSelectedNetwork = updatedAccountRowData.filter(
+            (a) => (a.network === stellarContextStellarNetwork)
+        ).length;
+        if (updatedAccountRowData.length === 0 || noAccountsOnSelectedNetwork === 0) {
             updatedAccountRowData.push({accountID: '', save: false, network: stellarContextStellarNetwork});
         }
         setAccountRowData(updatedAccountRowData);
