@@ -279,7 +279,9 @@ export default function AccountCard(props: Props) {
                                                                     return (
                                                                         <TableRow key={idx}>
                                                                             <TableCell
-                                                                                className={classes.headerRowCell}>
+                                                                                className={classes.headerRowCell}
+                                                                                style={{color: colorContextGetRandomColorForKey('XLM')}}
+                                                                            >
                                                                                 XLM
                                                                             </TableCell>
                                                                             <TableCell
@@ -287,7 +289,9 @@ export default function AccountCard(props: Props) {
                                                                                 -
                                                                             </TableCell>
                                                                             <TableCell
-                                                                                className={classes.headerRowCell}>
+                                                                                className={classes.headerRowCell}
+                                                                                style={{color: colorContextGetRandomColorForKey('XLM')}}
+                                                                            >
                                                                                 {numeral(bal.balance).format('0,0.0000000')}
                                                                             </TableCell>
                                                                             <TableCell
@@ -311,21 +315,36 @@ export default function AccountCard(props: Props) {
                                                                     };
                                                                     return (
                                                                         <TableRow key={idx}>
-                                                                            <TableCell className={classes.tableRowCell}>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: colorContextGetRandomColorForKey(
+                                                                                    otherBalance.asset_issuer)}}
+                                                                            >
                                                                                 {otherBalance.asset_code}
                                                                             </TableCell>
-                                                                            <TableCell className={classes.tableRowCell}>
-                                                                                <div className={cx({
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: colorContextGetRandomColorForKey(otherBalance.asset_issuer)}}
+                                                                            >
+                                                                                <div
+                                                                                    className={cx({
                                                                                     [classes.issuerRowCell]: expandIssuerColumn,
                                                                                     [classes.issuerRowCellSmall]: !expandIssuerColumn
-                                                                                })}>
+                                                                                })}
+                                                                                >
                                                                                     {otherBalance.asset_issuer}
                                                                                 </div>
                                                                             </TableCell>
-                                                                            <TableCell className={classes.tableRowCell}>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: colorContextGetRandomColorForKey(otherBalance.asset_issuer)}}
+                                                                            >
                                                                                 {numeral(otherBalance.balance).format('0,0.0000000')}
                                                                             </TableCell>
-                                                                            <TableCell className={classes.tableRowCell}>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: colorContextGetRandomColorForKey(otherBalance.asset_issuer)}}
+                                                                            >
                                                                                 {numeral(otherBalance.limit).format('0,0.0000000')}
                                                                             </TableCell>
                                                                             <TableCell className={classes.tableRowCell}>
@@ -340,67 +359,6 @@ export default function AccountCard(props: Props) {
                                             </div>
                                         </AccordionDetails>
                                     </Accordion>
-
-                                    <Accordion className={classes.backgroundColor}>
-                                        <AccordionSummary expandIcon={<OpenCardBodyIcon/>}>
-                                            <Typography>Balances</Typography>
-                                        </AccordionSummary>
-                                        <AccordionDetails>
-                                            <div>
-                                                {accountResponse.balances.map((b, idx) => {
-                                                    switch (b.asset_type) {
-                                                        case 'native':
-                                                            return (
-                                                                <DisplayField
-                                                                    key={idx}
-                                                                    label={'XLM'}
-                                                                    labelTypographyProps={{
-                                                                        style: {
-                                                                            color: colorContextGetRandomColorForKey('XLM')
-                                                                        }
-                                                                    }}
-                                                                    valueTypographyProps={{
-                                                                        style: {
-                                                                            color: colorContextGetRandomColorForKey('XLM')
-                                                                        }
-                                                                    }}
-                                                                    value={numeral(b.balance).format('0,0.0000000')}
-                                                                />
-                                                            )
-
-                                                        default:
-                                                            const otherBalance = b as any as {
-                                                                balance: string,
-                                                                asset_code: string,
-                                                                asset_issuer: string,
-                                                                limit: string,
-                                                                is_authorized: boolean
-                                                            }
-                                                            return (
-                                                                <DisplayField
-                                                                    key={idx}
-                                                                    label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ]`}
-                                                                    value={
-                                                                        `${numeral(otherBalance.balance).format('0,0.0000000')}    |    Limit: ${numeral(otherBalance.limit).format('0,0.0000000')}    |    Authorized: ${otherBalance.is_authorized}`
-                                                                    }
-                                                                    labelTypographyProps={{
-                                                                        style: {
-                                                                            color: colorContextGetRandomColorForKey(otherBalance.asset_code)
-                                                                        }
-                                                                    }}
-                                                                    valueTypographyProps={{
-                                                                        style: {
-                                                                            color: colorContextGetRandomColorForKey(otherBalance.asset_code)
-                                                                        }
-                                                                    }}
-                                                                />
-                                                            )
-                                                    }
-                                                })}
-                                            </div>
-                                        </AccordionDetails>
-                                    </Accordion>
-
 
                                     <Accordion className={classes.backgroundColor}>
                                         <AccordionSummary expandIcon={<OpenCardBodyIcon/>}>
