@@ -321,8 +321,10 @@ export default function AccountCard(props: Props) {
                                                                         <TableRow key={idx}>
                                                                             <TableCell
                                                                                 className={classes.tableRowCell}
-                                                                                style={{color: colorContextGetRandomColorForKey(
-                                                                                    otherBalance.asset_issuer)}}
+                                                                                style={{
+                                                                                    color: colorContextGetRandomColorForKey(
+                                                                                        otherBalance.asset_issuer)
+                                                                                }}
                                                                             >
                                                                                 {otherBalance.asset_code}
                                                                             </TableCell>
@@ -332,9 +334,9 @@ export default function AccountCard(props: Props) {
                                                                             >
                                                                                 <div
                                                                                     className={cx({
-                                                                                    [classes.issuerRowCell]: expandIssuerColumn,
-                                                                                    [classes.issuerRowCellSmall]: !expandIssuerColumn
-                                                                                })}
+                                                                                        [classes.issuerRowCell]: expandIssuerColumn,
+                                                                                        [classes.issuerRowCellSmall]: !expandIssuerColumn
+                                                                                    })}
                                                                                 >
                                                                                     {otherBalance.asset_issuer}
                                                                                 </div>
