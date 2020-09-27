@@ -227,6 +227,9 @@ export default function AccountCard(props: Props) {
                                                             <TableCell>
                                                                 Limit
                                                             </TableCell>
+                                                            <TableCell>
+                                                                Authorised
+                                                            </TableCell>
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
@@ -243,6 +246,9 @@ export default function AccountCard(props: Props) {
                                                                             </TableCell>
                                                                             <TableCell>
                                                                                 {numeral(bal.balance).format('0,0.0000000')}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                -
                                                                             </TableCell>
                                                                             <TableCell>
                                                                                 -
@@ -271,6 +277,9 @@ export default function AccountCard(props: Props) {
                                                                             </TableCell>
                                                                             <TableCell>
                                                                                 {numeral(otherBalance.limit).format('0,0.0000000')}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {otherBalance.is_authorized ? 'True' : 'False'}
                                                                             </TableCell>
                                                                         </TableRow>
                                                                     )
