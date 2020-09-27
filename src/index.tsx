@@ -5,17 +5,14 @@ import App from './App';
 import {CssBaseline} from '@material-ui/core';
 import * as serviceWorker from './serviceWorker';
 import ThemeContext from 'context/Theme';
-import StellarContext from './context/Stellar';
-import HeaderContext from './context/Header';
+import AppContext from './context/Stellar';
 
 ReactDOM.render(
     <ThemeContext>
-        <StellarContext>
-            <HeaderContext>
-                <CssBaseline/>
-                <App/>
-            </HeaderContext>
-        </StellarContext>
+        <AppContext>
+            <CssBaseline/>
+            <App/>
+        </AppContext>
     </ThemeContext>,
     document.getElementById('root')
 );
