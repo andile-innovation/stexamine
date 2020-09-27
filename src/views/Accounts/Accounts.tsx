@@ -12,6 +12,7 @@ import {
     List as ListIcon
 } from '@material-ui/icons';
 import {StellarNetwork, useStellarContext} from '../../context/Stellar';
+import {useColorContext} from '../../context/Color';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -46,24 +47,16 @@ const viewLocalStorageDataKey = 'accounts-savedAccountIDs';
 
 export default function Accounts() {
     const classes = useStyles();
-    const usedColors = useRef<{ [key: string]: string }>({})
     const [accountRowData, setAccountRowData] = useState<AccountRowData[]>([]);
     const [initialLoadDone, setInitialLoadDone] = useState(false);
     const [columnsLayout, setColumnsLayout] = useState(false);
     const {
         stellarContextStellarNetwork
     } = useStellarContext();
-    const getRandomColorForKey = (key: string) => {
-        // if a color is already stored for this key, use it
-        if (usedColors.current[key]) {
-            return usedColors.current[key]
-        }
-        // otherwise get a new random color
-        usedColors.current[key] = getRandomColor([
-            ...Object.values(usedColors.current)
-        ])
-        return usedColors.current[key];
-    }
+    const {
+        colorContextGetRandomColorForKey
+    } = useColorContext();
+
 
     // load saved account IDs from local storage
     useEffect(() => {
@@ -318,7 +311,6 @@ export default function Accounts() {
                                                     initialExpandIssuerColumn={columnsLayout}
                                                     accountID={accRowData.accountID}
                                                     onAccountIDChange={handleAccountIDChange(idx)}
-                                                    getRandomColorForKey={getRandomColorForKey}
                                                     editable
                                                 />
                                             </Grid>

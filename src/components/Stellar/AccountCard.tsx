@@ -23,12 +23,12 @@ import {
 import cx from 'classnames';
 import numeral from 'numeral';
 import {useStellarContext} from 'context/Stellar';
+import {useColorContext} from '../../context/Color';
 
 interface Props {
     editable?: boolean;
     accountID?: string;
     onAccountIDChange?: (newAccountID: string) => void;
-    getRandomColorForKey?: (key: string) => string;
     label?: string;
     invertColors?: boolean;
     maxWidth?: number;
@@ -94,10 +94,11 @@ export default function AccountCard(props: Props) {
             ? true
             : props.initialExpandIssuerColumn
     );
+    const {
+        colorContextGetRandomColorForKey
+    } = useColorContext();
 
-    const color = props.getRandomColorForKey
-        ? props.getRandomColorForKey(accountID)
-        : theme.palette.text.primary
+    const color = colorContextGetRandomColorForKey(accountID)
 
     useEffect(() => {
         (async () => {
@@ -357,16 +358,12 @@ export default function AccountCard(props: Props) {
                                                                     label={'XLM'}
                                                                     labelTypographyProps={{
                                                                         style: {
-                                                                            color: props.getRandomColorForKey
-                                                                                ? props.getRandomColorForKey('XLM')
-                                                                                : theme.palette.text.primary
+                                                                            color: colorContextGetRandomColorForKey('XLM')
                                                                         }
                                                                     }}
                                                                     valueTypographyProps={{
                                                                         style: {
-                                                                            color: props.getRandomColorForKey
-                                                                                ? props.getRandomColorForKey('XLM')
-                                                                                : theme.palette.text.primary
+                                                                            color: colorContextGetRandomColorForKey('XLM')
                                                                         }
                                                                     }}
                                                                     value={numeral(b.balance).format('0,0.0000000')}
@@ -390,16 +387,12 @@ export default function AccountCard(props: Props) {
                                                                     }
                                                                     labelTypographyProps={{
                                                                         style: {
-                                                                            color: props.getRandomColorForKey
-                                                                                ? props.getRandomColorForKey(otherBalance.asset_code)
-                                                                                : theme.palette.text.primary
+                                                                            color: colorContextGetRandomColorForKey(otherBalance.asset_code)
                                                                         }
                                                                     }}
                                                                     valueTypographyProps={{
                                                                         style: {
-                                                                            color: props.getRandomColorForKey
-                                                                                ? props.getRandomColorForKey(otherBalance.asset_code)
-                                                                                : theme.palette.text.primary
+                                                                            color: colorContextGetRandomColorForKey(otherBalance.asset_code)
                                                                         }
                                                                     }}
                                                                 />
@@ -423,16 +416,12 @@ export default function AccountCard(props: Props) {
                                                             label={'Public Key'}
                                                             labelTypographyProps={{
                                                                 style: {
-                                                                    color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(s.key)
-                                                                        : theme.palette.text.primary
+                                                                    color: colorContextGetRandomColorForKey(s.key)
                                                                 }
                                                             }}
                                                             valueTypographyProps={{
                                                                 style: {
-                                                                    color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(s.key)
-                                                                        : theme.palette.text.primary
+                                                                    color: colorContextGetRandomColorForKey(s.key)
                                                                 }
                                                             }}
                                                             value={s.key}
@@ -441,16 +430,12 @@ export default function AccountCard(props: Props) {
                                                             label={'Weight'}
                                                             labelTypographyProps={{
                                                                 style: {
-                                                                    color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(s.key)
-                                                                        : theme.palette.text.primary
+                                                                    color: colorContextGetRandomColorForKey(s.key)
                                                                 }
                                                             }}
                                                             valueTypographyProps={{
                                                                 style: {
-                                                                    color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(s.key)
-                                                                        : theme.palette.text.primary
+                                                                    color: colorContextGetRandomColorForKey(s.key)
                                                                 }
                                                             }}
                                                             value={s.weight.toString()}
