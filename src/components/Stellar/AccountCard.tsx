@@ -247,7 +247,7 @@ export default function AccountCard(props: Props) {
                                             <div
                                                 className={classes.tableWrapper}
                                                 style={{
-                                                    height: tableHeight,
+                                                    maxHeight: tableHeight,
                                                     width: props.maxWidth
                                                 }}
                                             >
@@ -372,7 +372,7 @@ export default function AccountCard(props: Props) {
                                             <div
                                                 className={classes.tableWrapper}
                                                 style={{
-                                                    height: tableHeight,
+                                                    maxHeight: tableHeight,
                                                     width: props.maxWidth
                                                 }}
                                             >
