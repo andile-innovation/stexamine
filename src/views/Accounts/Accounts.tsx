@@ -58,6 +58,7 @@ export default function Accounts() {
         const marshalledExistingSavedAccounts = localStorage.getItem(viewLocalStorageDataKey);
         if (marshalledExistingSavedAccounts === null) {
             localStorage.setItem(viewLocalStorageDataKey, JSON.stringify([]));
+            setAccountRowData([{accountID: '', save: false}]);
             return;
         }
         try {
