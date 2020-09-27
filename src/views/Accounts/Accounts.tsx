@@ -7,13 +7,19 @@ import {
     Add as AddAccountIcon,
     Save as SaveIcon,
     NoteAdd as AddDescriptionIcon,
-    Backspace as RemoveDescriptionIcon
+    Backspace as RemoveDescriptionIcon,
+    Dashboard as SideBySideLayoutIcon,
+    List as ListIcon
 } from '@material-ui/icons';
 import {StellarNetwork, useStellarContext} from '../../context/Stellar';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
-        paddingTop: theme.spacing(1.5)
+        paddingTop: theme.spacing(1),
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        gridRowGap: theme.spacing(1),
+        gridTemplateRows: 'auto 1fr'
     },
     cardContent: {
         display: 'grid',
@@ -43,6 +49,7 @@ export default function Accounts() {
     const usedColors = useRef<{ [key: string]: string }>({})
     const [accountRowData, setAccountRowData] = useState<AccountRowData[]>([]);
     const [initialLoadDone, setInitialLoadDone] = useState(false);
+    const [layoutToggle, setLayoutToggle] = useState(true);
     const {
         stellarContextStellarNetwork
     } = useStellarContext();
@@ -179,31 +186,64 @@ export default function Accounts() {
     }, [accountRowData, initialLoadDone])
 
     return (
-        <Grid container className={classes.root} spacing={1}>
-            {accountRowData.map((accRowData, idx) => {
-                if (accRowData.network === stellarContextStellarNetwork) {
-                    return (
-                        <Grid item key={idx} xs={6}>
-                            <Card>
-                                <div className={classes.cardContent}>
-                                    <Grid container direction={'row'} alignItems={'center'}>
-                                        <Grid item>
-                                            <Tooltip title={'Add Another'}>
-                                                <IconButton
-                                                    size={'small'}
-                                                    onClick={handleAddAccountCard(idx)}
+        <div className={classes.root}>
+            <Grid container>
+                <Grid item>
+                    {layoutToggle
+                        ? (
+                            <Tooltip
+                                title={'Side by Side Layout'}
+                                placement={'top'}
+                            >
+                                <IconButton
+                                    size={'small'}
+                                    onClick={() => setLayoutToggle(false)}
+                                >
+                                    <SideBySideLayoutIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        )
+                        : (
+                            <Tooltip
+                                title={'List Layout'}
+                                placement={'top'}
+                            >
+                                <IconButton
+                                    size={'small'}
+                                    onClick={() => setLayoutToggle(true)}
+                                >
+                                    <ListIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        )
+                    }
+                </Grid>
+            </Grid>
+            <Grid container spacing={1}>
+                {accountRowData.map((accRowData, idx) => {
+                    if (accRowData.network === stellarContextStellarNetwork) {
+                        return (
+                            <Grid item key={idx} xs={layoutToggle ? 12 : 6}>
+                                <Card>
+                                    <div className={classes.cardContent}>
+                                        <Grid container direction={'row'} alignItems={'center'}>
+                                            <Grid item>
+                                                <Tooltip title={'Add Another'}>
+                                                    <IconButton
+                                                        size={'small'}
+                                                        onClick={handleAddAccountCard(idx)}
+                                                    >
+                                                        <AddAccountIcon/>
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Grid>
+                                            <Grid item>
+                                                <Tooltip
+                                                    title={accRowData.save
+                                                        ? 'Already Saved'
+                                                        : 'Save To Local Storage'
+                                                    }
                                                 >
-                                                    <AddAccountIcon/>
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Grid>
-                                        <Grid item>
-                                            <Tooltip
-                                                title={accRowData.save
-                                                    ? 'Already Saved'
-                                                    : 'Save To Local Storage'
-                                                }
-                                            >
                                     <span>
                                         <IconButton
                                             size={'small'}
@@ -213,15 +253,15 @@ export default function Accounts() {
                                             <SaveIcon/>
                                         </IconButton>
                                     </span>
-                                            </Tooltip>
-                                        </Grid>
-                                        <Grid item>
-                                            <Tooltip
-                                                title={accRowData.save
-                                                    ? 'Remove From Storage'
-                                                    : 'Remove'
-                                                }
-                                            >
+                                                </Tooltip>
+                                            </Grid>
+                                            <Grid item>
+                                                <Tooltip
+                                                    title={accRowData.save
+                                                        ? 'Remove From Storage'
+                                                        : 'Remove'
+                                                    }
+                                                >
                                         <span>
                                             <IconButton
                                                 size={'small'}
@@ -230,12 +270,12 @@ export default function Accounts() {
                                                 <DeleteAccountIcon/>
                                             </IconButton>
                                         </span>
-                                            </Tooltip>
-                                        </Grid>
-                                        <Grid item>
-                                            {(accRowData.accountDescription === undefined)
-                                                ? (
-                                                    <Tooltip title={'Add a Description'}>
+                                                </Tooltip>
+                                            </Grid>
+                                            <Grid item>
+                                                {(accRowData.accountDescription === undefined)
+                                                    ? (
+                                                        <Tooltip title={'Add a Description'}>
                                             <span>
                                                 <IconButton
                                                     size={'small'}
@@ -244,10 +284,10 @@ export default function Accounts() {
                                                     <AddDescriptionIcon/>
                                                 </IconButton>
                                             </span>
-                                                    </Tooltip>
-                                                )
-                                                : (
-                                                    <Tooltip title={'Remove Description'}>
+                                                        </Tooltip>
+                                                    )
+                                                    : (
+                                                        <Tooltip title={'Remove Description'}>
                                             <span>
                                                 <IconButton
                                                     size={'small'}
@@ -256,39 +296,40 @@ export default function Accounts() {
                                                     <RemoveDescriptionIcon/>
                                                 </IconButton>
                                             </span>
-                                                    </Tooltip>
-                                                )
-                                            }
+                                                        </Tooltip>
+                                                    )
+                                                }
+                                            </Grid>
                                         </Grid>
-                                    </Grid>
-                                    <Grid container>
-                                        {(accRowData.accountDescription !== undefined) &&
-                                        <Grid item>
-                                            <Input
-                                                className={classes.accountDescription}
-                                                margin={'dense'}
-                                                placeholder={'Add a description'}
-                                                value={accRowData.accountDescription}
-                                                onChange={handleChangeDescription(idx)}
-                                            />
-                                        </Grid>}
-                                        <Grid item xs={12}>
-                                            <AccountCard
-                                                accountID={accRowData.accountID}
-                                                onAccountIDChange={handleAccountIDChange(idx)}
-                                                getRandomColorForKey={getRandomColorForKey}
-                                                editable
-                                            />
+                                        <Grid container>
+                                            {(accRowData.accountDescription !== undefined) &&
+                                            <Grid item>
+                                                <Input
+                                                    className={classes.accountDescription}
+                                                    margin={'dense'}
+                                                    placeholder={'Add a description'}
+                                                    value={accRowData.accountDescription}
+                                                    onChange={handleChangeDescription(idx)}
+                                                />
+                                            </Grid>}
+                                            <Grid item xs={12}>
+                                                <AccountCard
+                                                    accountID={accRowData.accountID}
+                                                    onAccountIDChange={handleAccountIDChange(idx)}
+                                                    getRandomColorForKey={getRandomColorForKey}
+                                                    editable
+                                                />
+                                            </Grid>
                                         </Grid>
-                                    </Grid>
-                                </div>
-                            </Card>
-                        </Grid>
-                    )
-                }
+                                    </div>
+                                </Card>
+                            </Grid>
+                        )
+                    }
 
-                return null;
-            })}
-        </Grid>
+                    return null;
+                })}
+            </Grid>
+        </div>
     )
 }
