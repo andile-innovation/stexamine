@@ -49,7 +49,7 @@ export default function Accounts() {
     const usedColors = useRef<{ [key: string]: string }>({})
     const [accountRowData, setAccountRowData] = useState<AccountRowData[]>([]);
     const [initialLoadDone, setInitialLoadDone] = useState(false);
-    const [layoutToggle, setLayoutToggle] = useState(true);
+    const [columnsLayout, setColumnsLayout] = useState(false);
     const {
         stellarContextStellarNetwork
     } = useStellarContext();
@@ -189,7 +189,7 @@ export default function Accounts() {
         <div className={classes.root}>
             <Grid container>
                 <Grid item>
-                    {layoutToggle
+                    {columnsLayout
                         ? (
                             <Tooltip
                                 title={'Side by Side Layout'}
@@ -197,7 +197,7 @@ export default function Accounts() {
                             >
                                 <IconButton
                                     size={'small'}
-                                    onClick={() => setLayoutToggle(false)}
+                                    onClick={() => setColumnsLayout(false)}
                                 >
                                     <SideBySideLayoutIcon/>
                                 </IconButton>
@@ -210,7 +210,7 @@ export default function Accounts() {
                             >
                                 <IconButton
                                     size={'small'}
-                                    onClick={() => setLayoutToggle(true)}
+                                    onClick={() => setColumnsLayout(true)}
                                 >
                                     <ListIcon/>
                                 </IconButton>
@@ -223,7 +223,7 @@ export default function Accounts() {
                 {accountRowData.map((accRowData, idx) => {
                     if (accRowData.network === stellarContextStellarNetwork) {
                         return (
-                            <Grid item key={idx} xs={layoutToggle ? 12 : 6}>
+                            <Grid item key={idx} xs={columnsLayout ? 12 : 6}>
                                 <Card>
                                     <div className={classes.cardContent}>
                                         <Grid container direction={'column'} alignItems={'center'}>
@@ -301,7 +301,7 @@ export default function Accounts() {
                                                 }
                                             </Grid>
                                         </Grid>
-                                        <Grid container>
+                                        <Grid container alignItems={'center'}>
                                             {(accRowData.accountDescription !== undefined) &&
                                             <Grid item>
                                                 <Input
@@ -314,7 +314,8 @@ export default function Accounts() {
                                             </Grid>}
                                             <Grid item xs={12}>
                                                 <AccountCard
-                                                    maxWidth={layoutToggle ? window.innerWidth / 1.15 : window.innerWidth / 2.35}
+                                                    maxWidth={columnsLayout ? window.innerWidth / 1.15 : window.innerWidth / 2.35}
+                                                    initialExpandIssuerColumn={columnsLayout}
                                                     accountID={accRowData.accountID}
                                                     onAccountIDChange={handleAccountIDChange(idx)}
                                                     getRandomColorForKey={getRandomColorForKey}
