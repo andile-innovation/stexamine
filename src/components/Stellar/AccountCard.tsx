@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         fontSize: 12
     },
     issuerRowCell: {
-        width: 500
+        width: 470
     },
     issuerRowCellSmall: {
         display: 'block',
