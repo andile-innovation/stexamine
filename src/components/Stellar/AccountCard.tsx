@@ -12,7 +12,7 @@ import {
     useTheme,
     Accordion,
     AccordionSummary,
-    AccordionDetails
+    AccordionDetails, Table, TableBody, TableHead, TableRow, TableCell
 } from '@material-ui/core';
 import {DisplayField} from 'components/Form';
 import {
@@ -205,6 +205,82 @@ export default function AccountCard(props: Props) {
                                         label={'Sequence Number'}
                                         value={accountResponse.sequence}
                                     />
+
+                                    <Accordion className={classes.backgroundColor}>
+                                        <AccordionSummary expandIcon={<OpenCardBodyIcon/>}>
+                                            <Typography>Balances</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <div>
+                                                <Table stickyHeader padding={'default'}>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell>
+                                                                Code
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                Issuer
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                Balance
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                Limit
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {accountResponse.balances.map((bal, idx) => {
+                                                            switch (bal.asset_type) {
+                                                                case 'native':
+                                                                    return (
+                                                                        <TableRow key={idx}>
+                                                                            <TableCell>
+                                                                                XLM
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                -
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {numeral(bal.balance).format('0,0.0000000')}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                -
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    )
+
+                                                                default:
+                                                                    const otherBalance = bal as any as {
+                                                                        balance: string,
+                                                                        asset_code: string,
+                                                                        asset_issuer: string,
+                                                                        limit: string,
+                                                                        is_authorized: boolean
+                                                                    };
+                                                                    return (
+                                                                        <TableRow key={idx}>
+                                                                            <TableCell>
+                                                                                {otherBalance.asset_code}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {otherBalance.asset_issuer}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {numeral(otherBalance.balance).format('0,0.0000000')}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {numeral(otherBalance.limit).format('0,0.0000000')}
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    )
+                                                            }
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                            </div>
+                                        </AccordionDetails>
+                                    </Accordion>
 
                                     <Accordion className={classes.backgroundColor}>
                                         <AccordionSummary expandIcon={<OpenCardBodyIcon/>}>
