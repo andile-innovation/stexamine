@@ -31,6 +31,8 @@ interface Props {
     getRandomColorForKey?: (key: string) => string;
     label?: string;
     invertColors?: boolean;
+    maxWidth?: number;
+    initialExpandIssuerColumn?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -41,6 +43,30 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     backgroundColor: {
         backgroundColor: theme.palette.background.default
+    },
+    balanceDetails: {
+        padding: theme.spacing(0.5)
+    },
+    tableWrapper: {
+        transition: 'height 0.3s ease-out',
+        overflow: 'auto'
+    },
+    headerRowCell: {
+        fontSize: 12
+    },
+    tableRowCell: {
+        padding: theme.spacing(0.5, 1, 0.5, 0),
+        fontSize: 12
+    },
+    issuerRowCell: {
+        width: 450
+    },
+    issuerRowCellSmall: {
+        display: 'block',
+        width: 200,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
     }
 }));
 
@@ -63,6 +89,11 @@ export default function AccountCard(props: Props) {
     const [refreshToggle, setRefreshToggle] = useState(false);
     const prevAccountID = usePrevious(accountID);
     const prevPropsAccountID = usePrevious(props.accountID);
+    const [expandIssuerColumn, setExpandIssuerColumn] = useState(
+        props.initialExpandIssuerColumn === undefined
+            ? true
+            : props.initialExpandIssuerColumn
+    );
 
     const color = props.getRandomColorForKey
         ? props.getRandomColorForKey(accountID)
@@ -210,15 +241,25 @@ export default function AccountCard(props: Props) {
                                         <AccordionSummary expandIcon={<OpenCardBodyIcon/>}>
                                             <Typography>Balances</Typography>
                                         </AccordionSummary>
-                                        <AccordionDetails>
-                                            <div>
-                                                <Table stickyHeader padding={'default'}>
+                                        <AccordionDetails className={classes.balanceDetails}>
+                                            <div
+                                                className={classes.tableWrapper}
+                                                style={{
+                                                    height: 100,
+                                                    width: props.maxWidth
+                                                }}
+                                            >
+                                                <Table stickyHeader padding={'none'}>
                                                     <TableHead>
                                                         <TableRow>
                                                             <TableCell>
                                                                 Code
                                                             </TableCell>
-                                                            <TableCell>
+                                                            <TableCell
+                                                                onClick={() => {
+                                                                    setExpandIssuerColumn(!expandIssuerColumn);
+                                                                }}
+                                                            >
                                                                 Issuer
                                                             </TableCell>
                                                             <TableCell>
@@ -238,19 +279,24 @@ export default function AccountCard(props: Props) {
                                                                 case 'native':
                                                                     return (
                                                                         <TableRow key={idx}>
-                                                                            <TableCell>
+                                                                            <TableCell
+                                                                                className={classes.headerRowCell}>
                                                                                 XLM
                                                                             </TableCell>
-                                                                            <TableCell>
+                                                                            <TableCell
+                                                                                className={classes.headerRowCell}>
                                                                                 -
                                                                             </TableCell>
-                                                                            <TableCell>
+                                                                            <TableCell
+                                                                                className={classes.headerRowCell}>
                                                                                 {numeral(bal.balance).format('0,0.0000000')}
                                                                             </TableCell>
-                                                                            <TableCell>
+                                                                            <TableCell
+                                                                                className={classes.headerRowCell}>
                                                                                 -
                                                                             </TableCell>
-                                                                            <TableCell>
+                                                                            <TableCell
+                                                                                className={classes.headerRowCell}>
                                                                                 -
                                                                             </TableCell>
                                                                         </TableRow>
@@ -266,19 +312,24 @@ export default function AccountCard(props: Props) {
                                                                     };
                                                                     return (
                                                                         <TableRow key={idx}>
-                                                                            <TableCell>
+                                                                            <TableCell className={classes.tableRowCell}>
                                                                                 {otherBalance.asset_code}
                                                                             </TableCell>
-                                                                            <TableCell>
-                                                                                {otherBalance.asset_issuer}
+                                                                            <TableCell className={classes.tableRowCell}>
+                                                                                <div className={cx({
+                                                                                    [classes.issuerRowCell]: expandIssuerColumn,
+                                                                                    [classes.issuerRowCellSmall]: !expandIssuerColumn
+                                                                                })}>
+                                                                                    {otherBalance.asset_issuer}
+                                                                                </div>
                                                                             </TableCell>
-                                                                            <TableCell>
+                                                                            <TableCell className={classes.tableRowCell}>
                                                                                 {numeral(otherBalance.balance).format('0,0.0000000')}
                                                                             </TableCell>
-                                                                            <TableCell>
+                                                                            <TableCell className={classes.tableRowCell}>
                                                                                 {numeral(otherBalance.limit).format('0,0.0000000')}
                                                                             </TableCell>
-                                                                            <TableCell>
+                                                                            <TableCell className={classes.tableRowCell}>
                                                                                 {otherBalance.is_authorized ? 'True' : 'False'}
                                                                             </TableCell>
                                                                         </TableRow>

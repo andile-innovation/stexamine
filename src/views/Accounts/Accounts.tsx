@@ -226,7 +226,7 @@ export default function Accounts() {
                             <Grid item key={idx} xs={layoutToggle ? 12 : 6}>
                                 <Card>
                                     <div className={classes.cardContent}>
-                                        <Grid container direction={'row'} alignItems={'center'}>
+                                        <Grid container direction={'column'} alignItems={'center'}>
                                             <Grid item>
                                                 <Tooltip title={'Add Another'}>
                                                     <IconButton
@@ -314,6 +314,7 @@ export default function Accounts() {
                                             </Grid>}
                                             <Grid item xs={12}>
                                                 <AccountCard
+                                                    maxWidth={layoutToggle ? window.innerWidth / 1.15 : window.innerWidth / 2.35}
                                                     accountID={accRowData.accountID}
                                                     onAccountIDChange={handleAccountIDChange(idx)}
                                                     getRandomColorForKey={getRandomColorForKey}
