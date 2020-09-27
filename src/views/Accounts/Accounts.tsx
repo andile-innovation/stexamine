@@ -1,5 +1,4 @@
-import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
-import {getRandomColor} from 'utilities/color';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Card, Grid, IconButton, Input, makeStyles, Theme, Tooltip} from '@material-ui/core';
 import {AccountCard} from 'components/Stellar';
 import {
@@ -11,8 +10,7 @@ import {
     Dashboard as SideBySideLayoutIcon,
     List as ListIcon
 } from '@material-ui/icons';
-import {StellarNetwork, useStellarContext} from '../../context/Stellar';
-import {useColorContext} from '../../context/Color';
+import {StellarNetwork, useStellarContext} from 'context/Stellar';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -53,9 +51,6 @@ export default function Accounts() {
     const {
         stellarContextStellarNetwork
     } = useStellarContext();
-    const {
-        colorContextGetRandomColorForKey
-    } = useColorContext();
 
 
     // load saved account IDs from local storage

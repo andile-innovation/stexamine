@@ -9,7 +9,6 @@ import {
     makeStyles, TextField,
     Theme,
     Tooltip, Typography,
-    useTheme,
     Accordion,
     AccordionSummary,
     AccordionDetails, Table, TableBody, TableHead, TableRow, TableCell
@@ -23,7 +22,7 @@ import {
 import cx from 'classnames';
 import numeral from 'numeral';
 import {useStellarContext} from 'context/Stellar';
-import {useColorContext} from '../../context/Color';
+import {useColorContext} from 'context/Color';
 
 interface Props {
     editable?: boolean;
@@ -84,7 +83,6 @@ export default function AccountCard(props: Props) {
     const [accountResponse, setAccountResponse] = useState<AccountResponse | undefined>(undefined)
     const [accountID, setAccountID] = useState(props.accountID ? props.accountID : '')
     const [accountCardOpen, setAccountCardOpen] = useState(true);
-    const theme = useTheme();
     const {stellarContextStellarClient} = useStellarContext();
     const [refreshToggle, setRefreshToggle] = useState(false);
     const prevAccountID = usePrevious(accountID);
