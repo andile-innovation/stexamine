@@ -283,11 +283,12 @@ export default function AccountCard(props: Props) {
                                                         {accountResponse.balances.map((bal, idx) => {
                                                             switch (bal.asset_type) {
                                                                 case 'native':
+                                                                    const xlmColor = colorContextGetRandomColorForKey('XLM');
                                                                     return (
                                                                         <TableRow key={idx}>
                                                                             <TableCell
                                                                                 className={classes.tableRowCell}
-                                                                                style={{color: colorContextGetRandomColorForKey('XLM')}}
+                                                                                style={{color: xlmColor}}
                                                                             >
                                                                                 XLM
                                                                             </TableCell>
@@ -297,16 +298,20 @@ export default function AccountCard(props: Props) {
                                                                             </TableCell>
                                                                             <TableCell
                                                                                 className={classes.tableRowCell}
-                                                                                style={{color: colorContextGetRandomColorForKey('XLM')}}
+                                                                                style={{color: xlmColor}}
                                                                             >
                                                                                 {numeral(bal.balance).format('0,0.0000000')}
                                                                             </TableCell>
                                                                             <TableCell
-                                                                                className={classes.tableRowCell}>
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: xlmColor}}
+                                                                            >
                                                                                 -
                                                                             </TableCell>
                                                                             <TableCell
-                                                                                className={classes.tableRowCell}>
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: xlmColor}}
+                                                                            >
                                                                                 -
                                                                             </TableCell>
                                                                         </TableRow>
@@ -320,20 +325,19 @@ export default function AccountCard(props: Props) {
                                                                         limit: string,
                                                                         is_authorized: boolean
                                                                     };
+                                                                    const assetCodeColor = colorContextGetRandomColorForKey(otherBalance.asset_code);
+                                                                    const issuerColor = colorContextGetRandomColorForKey(otherBalance.asset_issuer);
                                                                     return (
                                                                         <TableRow key={idx}>
                                                                             <TableCell
                                                                                 className={classes.tableRowCell}
-                                                                                style={{
-                                                                                    color: colorContextGetRandomColorForKey(
-                                                                                        otherBalance.asset_issuer)
-                                                                                }}
+                                                                                style={{color: assetCodeColor}}
                                                                             >
                                                                                 {otherBalance.asset_code}
                                                                             </TableCell>
                                                                             <TableCell
                                                                                 className={classes.tableRowCell}
-                                                                                style={{color: colorContextGetRandomColorForKey(otherBalance.asset_issuer)}}
+                                                                                style={{color: issuerColor}}
                                                                             >
                                                                                 <div
                                                                                     className={cx({
@@ -346,13 +350,13 @@ export default function AccountCard(props: Props) {
                                                                             </TableCell>
                                                                             <TableCell
                                                                                 className={classes.tableRowCell}
-                                                                                style={{color: colorContextGetRandomColorForKey(otherBalance.asset_issuer)}}
+                                                                                style={{color: assetCodeColor}}
                                                                             >
                                                                                 {numeral(otherBalance.balance).format('0,0.0000000')}
                                                                             </TableCell>
                                                                             <TableCell
                                                                                 className={classes.tableRowCell}
-                                                                                style={{color: colorContextGetRandomColorForKey(otherBalance.asset_issuer)}}
+                                                                                style={{color: assetCodeColor}}
                                                                             >
                                                                                 {numeral(otherBalance.limit).format('0,0.0000000')}
                                                                             </TableCell>
