@@ -85,7 +85,7 @@ export default function AccountCard(props: Props) {
     const [loading, setLoading] = useState(false);
     const [accountResponse, setAccountResponse] = useState<AccountResponse | undefined>(undefined)
     const [accountID, setAccountID] = useState(props.accountID ? props.accountID : '')
-    const [accountCardOpen, setAccountCardOpen] = useState(true);
+    const [accountCardOpen, setAccountCardOpen] = useState(false);
     const {stellarContextStellarClient} = useStellarContext();
     const [refreshToggle, setRefreshToggle] = useState(false);
     const prevAccountID = usePrevious(accountID);
