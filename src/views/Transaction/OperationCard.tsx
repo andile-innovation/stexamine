@@ -4,11 +4,11 @@ import {DisplayField} from 'components/Form';
 import React from 'react';
 import {AccountCard} from 'components/Stellar';
 import numeral from 'numeral';
+import {useColorContext} from '../../context/Color';
 
 interface OperationCardProps {
     transactionSource?: string;
     operation: Operation;
-    getRandomColorForKey: (key: string) => string;
 }
 
 export default function OperationCard(props: OperationCardProps) {
@@ -18,7 +18,6 @@ export default function OperationCard(props: OperationCardProps) {
                 <CreateAccountOperationCard
                     transactionSource={props.transactionSource}
                     operation={props.operation as Operation.CreateAccount}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
             )
 
@@ -27,7 +26,6 @@ export default function OperationCard(props: OperationCardProps) {
                 <PaymentOperationCard
                     transactionSource={props.transactionSource}
                     operation={props.operation as Operation.Payment}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
             )
 
@@ -36,7 +34,6 @@ export default function OperationCard(props: OperationCardProps) {
                 <ChangeTrustOperationCard
                     transactionSource={props.transactionSource}
                     operation={props.operation as Operation.ChangeTrust}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
             )
 
@@ -45,7 +42,6 @@ export default function OperationCard(props: OperationCardProps) {
                 <SetOptionsOperationCard
                     transactionSource={props.transactionSource}
                     operation={props.operation as Operation.SetOptions}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
             )
 
@@ -54,7 +50,6 @@ export default function OperationCard(props: OperationCardProps) {
                 <AllowTrustOperationCard
                     transactionSource={props.transactionSource}
                     operation={props.operation as Operation.AllowTrust}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
             )
     }
@@ -81,7 +76,6 @@ export default function OperationCard(props: OperationCardProps) {
 interface CreateAccountOperationCardProps {
     transactionSource?: string;
     operation: Operation.CreateAccount;
-    getRandomColorForKey: (key: string) => string;
 }
 
 const useCreateAccountOperationCardStyles = makeStyles((theme: Theme) => ({
@@ -96,9 +90,12 @@ const useCreateAccountOperationCardStyles = makeStyles((theme: Theme) => ({
 }));
 
 function CreateAccountOperationCard(props: CreateAccountOperationCardProps) {
+    const {
+        colorContextGetRandomColorForKey
+    } = useColorContext();
     const classes = useCreateAccountOperationCardStyles();
 
-    const assetColor = props.getRandomColorForKey('XLM');
+    const assetColor = colorContextGetRandomColorForKey('XLM');
 
     const operationSourceAccount = props.operation.source
         ? props.operation.source
@@ -119,7 +116,6 @@ function CreateAccountOperationCard(props: CreateAccountOperationCardProps) {
                 <AccountCard
                     label={'Source'}
                     accountID={operationSourceAccount}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
 
                 <div style={{height: 8}}/>
@@ -128,7 +124,6 @@ function CreateAccountOperationCard(props: CreateAccountOperationCardProps) {
                 <AccountCard
                     label={'Destination (New)'}
                     accountID={props.operation.destination}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
             </CardContent>
             <CardContent>
@@ -145,7 +140,6 @@ function CreateAccountOperationCard(props: CreateAccountOperationCardProps) {
 interface PaymentOperationCardProps {
     transactionSource?: string;
     operation: Operation.Payment;
-    getRandomColorForKey: (key: string) => string;
 }
 
 const usePaymentOperationCardStyles = makeStyles((theme: Theme) => ({
@@ -161,9 +155,10 @@ const usePaymentOperationCardStyles = makeStyles((theme: Theme) => ({
 
 function PaymentOperationCard(props: PaymentOperationCardProps) {
     const classes = usePaymentOperationCardStyles();
+    const {colorContextGetRandomColorForKey} = useColorContext();
 
-    const assetColor = props.getRandomColorForKey(props.operation.asset.code);
-    const assetIssuanceAccountColor = props.getRandomColorForKey(props.operation.asset.issuer)
+    const assetColor = colorContextGetRandomColorForKey(props.operation.asset.code);
+    const assetIssuanceAccountColor = colorContextGetRandomColorForKey(props.operation.asset.issuer)
 
     const operationSourceAccount = props.operation.source
         ? props.operation.source
@@ -184,7 +179,6 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
                 <AccountCard
                     label={'Source'}
                     accountID={operationSourceAccount}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
 
                 <div style={{height: 8}}/>
@@ -193,7 +187,6 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
                 <AccountCard
                     label={'Destination'}
                     accountID={props.operation.destination}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
 
                 <DisplayField
@@ -231,7 +224,6 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
 interface AllowTrustOperationCardProps {
     transactionSource?: string;
     operation: Operation.AllowTrust;
-    getRandomColorForKey: (key: string) => string;
 }
 
 const useAllowTrustOperationCardStyles = makeStyles((theme: Theme) => ({
@@ -246,10 +238,11 @@ const useAllowTrustOperationCardStyles = makeStyles((theme: Theme) => ({
 }));
 
 function AllowTrustOperationCard(props: AllowTrustOperationCardProps) {
+    const {colorContextGetRandomColorForKey} = useColorContext();
     const classes = useAllowTrustOperationCardStyles();
 
-    const assetCodeColor = props.getRandomColorForKey(props.operation.assetCode);
-    const trustorAccountColor = props.getRandomColorForKey(props.operation.trustor);
+    const assetCodeColor = colorContextGetRandomColorForKey(props.operation.assetCode);
+    const trustorAccountColor = colorContextGetRandomColorForKey(props.operation.trustor);
 
     const operationSourceAccount = props.operation.source
         ? props.operation.source
@@ -257,7 +250,7 @@ function AllowTrustOperationCard(props: AllowTrustOperationCardProps) {
             ? props.transactionSource
             : 'no source'
 
-    const sourceAccountColor = props.getRandomColorForKey(operationSourceAccount);
+    const sourceAccountColor = colorContextGetRandomColorForKey(operationSourceAccount);
 
     return (
         <Card className={classes.bodyCard}>
@@ -272,7 +265,6 @@ function AllowTrustOperationCard(props: AllowTrustOperationCardProps) {
                 <AccountCard
                     label={'Source'}
                     accountID={operationSourceAccount}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
 
                 <div style={{height: 8}}/>
@@ -318,7 +310,6 @@ function AllowTrustOperationCard(props: AllowTrustOperationCardProps) {
 interface ChangeTrustOperationCardProps {
     transactionSource?: string;
     operation: Operation.ChangeTrust;
-    getRandomColorForKey: (key: string) => string;
 }
 
 const useChangeTrustOperationCardStyles = makeStyles((theme: Theme) => ({
@@ -333,10 +324,11 @@ const useChangeTrustOperationCardStyles = makeStyles((theme: Theme) => ({
 }));
 
 function ChangeTrustOperationCard(props: ChangeTrustOperationCardProps) {
+    const {colorContextGetRandomColorForKey} = useColorContext();
     const classes = useChangeTrustOperationCardStyles();
 
-    const assetCodeColor = props.getRandomColorForKey(props.operation.line.code);
-    const assetIssuanceAccountColor = props.getRandomColorForKey(props.operation.line.issuer);
+    const assetCodeColor = colorContextGetRandomColorForKey(props.operation.line.code);
+    const assetIssuanceAccountColor = colorContextGetRandomColorForKey(props.operation.line.issuer);
 
     const operationSourceAccount = props.operation.source
         ? props.operation.source
@@ -357,7 +349,6 @@ function ChangeTrustOperationCard(props: ChangeTrustOperationCardProps) {
                 <AccountCard
                     label={'Source'}
                     accountID={operationSourceAccount}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
 
                 <div style={{height: 8}}/>
@@ -413,10 +404,10 @@ const useSetOptionsOperationCardStyles = makeStyles((theme: Theme) => ({
 interface SetOptionsOperationCardProps {
     transactionSource?: string;
     operation: Operation.SetOptions;
-    getRandomColorForKey: (key: string) => string;
 }
 
 function SetOptionsOperationCard(props: SetOptionsOperationCardProps) {
+    const {colorContextGetRandomColorForKey} = useColorContext();
     const classes = useSetOptionsOperationCardStyles();
 
     const operationSourceAccount = props.operation.source
@@ -438,7 +429,6 @@ function SetOptionsOperationCard(props: SetOptionsOperationCardProps) {
                 <AccountCard
                     label={'Source'}
                     accountID={operationSourceAccount}
-                    getRandomColorForKey={props.getRandomColorForKey}
                 />
 
                 {props.operation.clearFlags &&
@@ -488,11 +478,11 @@ function SetOptionsOperationCard(props: SetOptionsOperationCardProps) {
                     <DisplayField
                         label={'Signer Key'}
                         value={getSignerKey(props.operation.signer)}
-                        valueTypographyProps={{style: {color: props.getRandomColorForKey(getSignerKey(props.operation.signer))}}}
+                        valueTypographyProps={{style: {color: colorContextGetRandomColorForKey(getSignerKey(props.operation.signer))}}}
                     />
                     <DisplayField
                         label={'Signer Weight'}
-                        valueTypographyProps={{style: {color: props.getRandomColorForKey(getSignerKey(props.operation.signer))}}}
+                        valueTypographyProps={{style: {color: colorContextGetRandomColorForKey(getSignerKey(props.operation.signer))}}}
                         value={getSignerWeight(props.operation.signer)}
                     />
                 </div>}

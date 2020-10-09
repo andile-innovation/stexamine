@@ -4,12 +4,14 @@ import {
     Card,
     CardContent,
     CardHeader,
-    Collapse, Grid,
+    Collapse,
     IconButton,
     makeStyles, TextField,
     Theme,
     Tooltip, Typography,
-    useTheme
+    Accordion,
+    AccordionSummary,
+    AccordionDetails, Table, TableBody, TableHead, TableRow, TableCell
 } from '@material-ui/core';
 import {DisplayField} from 'components/Form';
 import {
@@ -20,14 +22,16 @@ import {
 import cx from 'classnames';
 import numeral from 'numeral';
 import {useStellarContext} from 'context/Stellar';
+import {useColorContext} from 'context/Color';
 
 interface Props {
     editable?: boolean;
     accountID?: string;
     onAccountIDChange?: (newAccountID: string) => void;
-    getRandomColorForKey?: (key: string) => string;
     label?: string;
     invertColors?: boolean;
+    maxWidth?: number;
+    initialExpandIssuerColumn?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -36,8 +40,33 @@ const useStyles = makeStyles((theme: Theme) => ({
         gridTemplateColumns: '1fr auto auto',
         alignItems: 'center'
     },
-    detailCard: {
+    backgroundColor: {
         backgroundColor: theme.palette.background.default
+    },
+    balanceDetails: {
+        padding: theme.spacing(0.5)
+    },
+    tableWrapper: {
+        transition: 'height 0.3s ease-out',
+        overflow: 'auto'
+    },
+    headerRowCell: {
+        fontSize: 12,
+        padding: theme.spacing(0.5, 1, 0.5, 0)
+    },
+    tableRowCell: {
+        padding: theme.spacing(0.5, 1, 0.5, 0),
+        fontSize: 12
+    },
+    issuerRowCell: {
+        width: 470
+    },
+    issuerRowCellSmall: {
+        display: 'block',
+        width: 200,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
     }
 }));
 
@@ -49,24 +78,28 @@ function usePrevious(value: any) {
     return ref.current;
 }
 
+const tableHeight = 200
+
 export default function AccountCard(props: Props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [accountResponse, setAccountResponse] = useState<AccountResponse | undefined>(undefined)
     const [accountID, setAccountID] = useState(props.accountID ? props.accountID : '')
     const [accountCardOpen, setAccountCardOpen] = useState(false);
-    const [balancesOpen, setBalancesOpen] = useState(false);
-    const [signatoriesOpen, setSignatoriesOpen] = useState(false);
-    const [transactionsOpen, setTransactionsOpen] = useState(false);
-    const theme = useTheme();
     const {stellarContextStellarClient} = useStellarContext();
     const [refreshToggle, setRefreshToggle] = useState(false);
     const prevAccountID = usePrevious(accountID);
     const prevPropsAccountID = usePrevious(props.accountID);
+    const [expandIssuerColumn, setExpandIssuerColumn] = useState(
+        props.initialExpandIssuerColumn === undefined
+            ? true
+            : props.initialExpandIssuerColumn
+    );
+    const {
+        colorContextGetRandomColorForKey
+    } = useColorContext();
 
-    const color = props.getRandomColorForKey
-        ? props.getRandomColorForKey(accountID)
-        : theme.palette.text.primary
+    const color = colorContextGetRandomColorForKey(accountID)
 
     useEffect(() => {
         (async () => {
@@ -126,7 +159,7 @@ export default function AccountCard(props: Props) {
     }, [props.accountID, prevPropsAccountID, accountID, prevAccountID])
 
     return (
-        <Card className={cx({[classes.detailCard]: !!props.invertColors})}>
+        <Card className={cx({[classes.backgroundColor]: !!props.invertColors})}>
             <CardHeader
                 disableTypography
                 title={
@@ -199,222 +232,204 @@ export default function AccountCard(props: Props) {
 
                         if (accountResponse) {
                             return (
-                                <Grid container spacing={1} direction={'column'}>
-                                    <Grid item>
-                                        <DisplayField
-                                            label={'Sequence Number'}
-                                            value={accountResponse.sequence}
-                                        />
-                                    </Grid>
+                                <React.Fragment>
 
-                                    {/* Balances */}
-                                    <Grid item>
-                                        <Card className={cx({[classes.detailCard]: !props.invertColors})}>
-                                            <CardHeader
-                                                disableTypography
-                                                title={
-                                                    <div className={classes.accountCardHeader}>
-                                                        <Typography
-                                                            children={'Balances'}
-                                                        />
-                                                        <Tooltip
-                                                            title={balancesOpen ? 'Hide Balances' : 'Show Balances'}
-                                                            placement={'top'}
-                                                        >
-                                                            <span>
-                                                                <IconButton
-                                                                    size={'small'}
-                                                                    onClick={() => setBalancesOpen(!balancesOpen)}
-                                                                >
-                                                                    {balancesOpen
-                                                                        ? <CloseCardBodyIcon/>
-                                                                        : <OpenCardBodyIcon/>
-                                                                    }
-                                                                </IconButton>
-                                                            </span>
-                                                        </Tooltip>
-                                                    </div>
-                                                }
+                                    <DisplayField
+                                        label={'Sequence Number'}
+                                        value={accountResponse.sequence}
+                                    />
+
+                                    <Accordion className={classes.backgroundColor}>
+                                        <AccordionSummary
+                                            expandIcon={<OpenCardBodyIcon/>}>
+                                            <Typography
+                                                children={'Balances'}
                                             />
-                                            <Collapse in={balancesOpen}>
-                                                <CardContent>
-                                                    {accountResponse.balances.map((b, idx) => {
-                                                        switch (b.asset_type) {
-                                                            case 'native':
-                                                                return (
-                                                                    <DisplayField
-                                                                        key={idx}
-                                                                        label={'XLM'}
-                                                                        labelTypographyProps={{
-                                                                            style: {
-                                                                                color: props.getRandomColorForKey
-                                                                                    ? props.getRandomColorForKey('XLM')
-                                                                                    : theme.palette.text.primary
-                                                                            }
-                                                                        }}
-                                                                        valueTypographyProps={{
-                                                                            style: {
-                                                                                color: props.getRandomColorForKey
-                                                                                    ? props.getRandomColorForKey('XLM')
-                                                                                    : theme.palette.text.primary
-                                                                            }
-                                                                        }}
-                                                                        value={numeral(b.balance).format('0,0.0000000')}
-                                                                    />
-                                                                )
+                                        </AccordionSummary>
+                                        <AccordionDetails className={classes.balanceDetails}>
+                                            <div
+                                                className={classes.tableWrapper}
+                                                style={{
+                                                    maxHeight: tableHeight,
+                                                    width: props.maxWidth
+                                                }}
+                                            >
+                                                <Table stickyHeader padding={'none'}>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Code
+                                                            </TableCell>
+                                                            <TableCell
+                                                                className={classes.headerRowCell}
+                                                                onClick={() => {
+                                                                    setExpandIssuerColumn(!expandIssuerColumn);
+                                                                }}
+                                                            >
+                                                                Issuer
+                                                            </TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Balance
+                                                            </TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Limit
+                                                            </TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Authorised
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {accountResponse.balances.map((bal, idx) => {
+                                                            switch (bal.asset_type) {
+                                                                case 'native':
+                                                                    const xlmColor = colorContextGetRandomColorForKey('XLM');
+                                                                    return (
+                                                                        <TableRow key={idx}>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: xlmColor}}
+                                                                            >
+                                                                                XLM
+                                                                            </TableCell>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}>
+                                                                                -
+                                                                            </TableCell>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: xlmColor}}
+                                                                            >
+                                                                                {numeral(bal.balance).format('0,0.0000000')}
+                                                                            </TableCell>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: xlmColor}}
+                                                                            >
+                                                                                -
+                                                                            </TableCell>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: xlmColor}}
+                                                                            >
+                                                                                -
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    )
 
-                                                            default:
-                                                                const otherBalance = b as any as {
-                                                                    balance: string,
-                                                                    asset_code: string,
-                                                                    asset_issuer: string,
-                                                                    limit: string,
-                                                                    is_authorized: boolean
-                                                                }
-                                                                return (
-                                                                    <DisplayField
-                                                                        key={idx}
-                                                                        label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ]`}
-                                                                        value={
-                                                                            `${numeral(otherBalance.balance).format('0,0.0000000')}    |    Limit: ${numeral(otherBalance.limit).format('0,0.0000000')}    |    Authorized: ${otherBalance.is_authorized}`
-                                                                        }
-                                                                        labelTypographyProps={{
-                                                                            style: {
-                                                                                color: props.getRandomColorForKey
-                                                                                    ? props.getRandomColorForKey(otherBalance.asset_code)
-                                                                                    : theme.palette.text.primary
-                                                                            }
-                                                                        }}
-                                                                        valueTypographyProps={{
-                                                                            style: {
-                                                                                color: props.getRandomColorForKey
-                                                                                    ? props.getRandomColorForKey(otherBalance.asset_code)
-                                                                                    : theme.palette.text.primary
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                )
-                                                        }
-                                                    })}
-                                                </CardContent>
-                                            </Collapse>
-                                        </Card>
-                                    </Grid>
+                                                                default:
+                                                                    const otherBalance = bal as any as {
+                                                                        balance: string,
+                                                                        asset_code: string,
+                                                                        asset_issuer: string,
+                                                                        limit: string,
+                                                                        is_authorized: boolean
+                                                                    };
+                                                                    const assetCodeColor = colorContextGetRandomColorForKey(otherBalance.asset_code);
+                                                                    const issuerColor = colorContextGetRandomColorForKey(otherBalance.asset_issuer);
+                                                                    return (
+                                                                        <TableRow key={idx}>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: assetCodeColor}}
+                                                                            >
+                                                                                {otherBalance.asset_code}
+                                                                            </TableCell>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: issuerColor}}
+                                                                            >
+                                                                                <div
+                                                                                    className={cx({
+                                                                                        [classes.issuerRowCell]: expandIssuerColumn,
+                                                                                        [classes.issuerRowCellSmall]: !expandIssuerColumn
+                                                                                    })}
+                                                                                >
+                                                                                    {otherBalance.asset_issuer}
+                                                                                </div>
+                                                                            </TableCell>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: assetCodeColor}}
+                                                                            >
+                                                                                {numeral(otherBalance.balance).format('0,0.0000000')}
+                                                                            </TableCell>
+                                                                            <TableCell
+                                                                                className={classes.tableRowCell}
+                                                                                style={{color: assetCodeColor}}
+                                                                            >
+                                                                                {numeral(otherBalance.limit).format('0,0.0000000')}
+                                                                            </TableCell>
+                                                                            <TableCell className={classes.tableRowCell}>
+                                                                                {otherBalance.is_authorized ? 'True' : 'False'}
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    )
+                                                            }
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                            </div>
+                                        </AccordionDetails>
+                                    </Accordion>
 
-                                    {/* Signatories */}
-                                    <Grid item>
-                                        <Card className={cx({[classes.detailCard]: !props.invertColors})}>
-                                            <CardHeader
-                                                disableTypography
-                                                title={
-                                                    <div className={classes.accountCardHeader}>
-                                                        <Typography
-                                                            children={'Signatories'}
-                                                        />
-                                                        <Tooltip
-                                                            title={signatoriesOpen ? 'Hide Signatories' : 'Show Signatories'}
-                                                            placement={'top'}
-                                                        >
-                                                            <span>
-                                                                <IconButton
-                                                                    size={'small'}
-                                                                    onClick={() => setSignatoriesOpen(!signatoriesOpen)}
-                                                                >
-                                                                    {signatoriesOpen
-                                                                        ? <CloseCardBodyIcon/>
-                                                                        : <OpenCardBodyIcon/>
-                                                                    }
-                                                                </IconButton>
-                                                            </span>
-                                                        </Tooltip>
-                                                    </div>
-                                                }
-                                            />
-                                            <Collapse in={signatoriesOpen}>
-                                                {accountResponse.signers.map((s, idx) => (
-                                                    <CardContent key={idx}>
-                                                        <DisplayField
-                                                            label={'Public Key'}
-                                                            labelTypographyProps={{
-                                                                style: {
-                                                                    color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(s.key)
-                                                                        : theme.palette.text.primary
-                                                                }
-                                                            }}
-                                                            valueTypographyProps={{
-                                                                style: {
-                                                                    color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(s.key)
-                                                                        : theme.palette.text.primary
-                                                                }
-                                                            }}
-                                                            value={s.key}
-                                                        />
-                                                        <DisplayField
-                                                            label={'Weight'}
-                                                            labelTypographyProps={{
-                                                                style: {
-                                                                    color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(s.key)
-                                                                        : theme.palette.text.primary
-                                                                }
-                                                            }}
-                                                            valueTypographyProps={{
-                                                                style: {
-                                                                    color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(s.key)
-                                                                        : theme.palette.text.primary
-                                                                }
-                                                            }}
-                                                            value={s.weight.toString()}
-                                                        />
-                                                    </CardContent>
-                                                ))}
-                                            </Collapse>
-                                        </Card>
-                                    </Grid>
-
-                                    {/* Transactions */}
-                                    <Grid item>
-                                        <Card className={cx({[classes.detailCard]: !props.invertColors})}>
-                                            <CardHeader
-                                                disableTypography
-                                                title={
-                                                    <div className={classes.accountCardHeader}>
-                                                        <Typography
-                                                            children={'Transactions'}
-                                                        />
-                                                        <Tooltip
-                                                            title={signatoriesOpen ? 'Hide Transactions' : 'Show Transactions'}
-                                                            placement={'top'}
-                                                        >
-                                                            <span>
-                                                                <IconButton
-                                                                    size={'small'}
-                                                                    onClick={() => setTransactionsOpen(!transactionsOpen)}
-                                                                >
-                                                                    {transactionsOpen
-                                                                        ? <CloseCardBodyIcon/>
-                                                                        : <OpenCardBodyIcon/>
-                                                                    }
-                                                                </IconButton>
-                                                            </span>
-                                                        </Tooltip>
-                                                    </div>
-                                                }
-                                            />
-                                            <Collapse in={transactionsOpen}>
-                                                <CardContent>
-                                                    <DisplayField
-                                                        label={'Good things here'}
-                                                        value={'are coming...'}
-                                                    />
-                                                </CardContent>
-                                            </Collapse>
-                                        </Card>
-                                    </Grid>
-                                </Grid>
+                                    <Accordion className={classes.backgroundColor}>
+                                        <AccordionSummary expandIcon={<OpenCardBodyIcon/>}>
+                                            <Typography>Signatories</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails className={classes.balanceDetails}>
+                                            <div
+                                                className={classes.tableWrapper}
+                                                style={{
+                                                    maxHeight: tableHeight,
+                                                    width: props.maxWidth
+                                                }}
+                                            >
+                                                <Table stickyHeader padding={'none'}>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Signatory
+                                                            </TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Weight
+                                                            </TableCell>
+                                                            <TableCell className={classes.headerRowCell}>
+                                                                Type
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {accountResponse.signers.map((bal, idx) => {
+                                                            return (
+                                                                <TableRow key={idx}>
+                                                                    <TableCell
+                                                                        className={classes.tableRowCell}
+                                                                        style={{color: colorContextGetRandomColorForKey(bal.key)}}
+                                                                    >
+                                                                        {bal.key}
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        className={classes.tableRowCell}
+                                                                        style={{color: colorContextGetRandomColorForKey(bal.key)}}
+                                                                    >
+                                                                        {bal.weight}
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        className={classes.tableRowCell}
+                                                                        style={{color: colorContextGetRandomColorForKey(bal.key)}}
+                                                                    >
+                                                                        {bal.type}
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            )
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                            </div>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </React.Fragment>
                             )
                         }
 

@@ -6,13 +6,16 @@ import {CssBaseline} from '@material-ui/core';
 import * as serviceWorker from './serviceWorker';
 import ThemeContext from 'context/Theme';
 import AppContext from './context/Stellar';
+import ColorContext from './context/Color';
 
 ReactDOM.render(
     <ThemeContext>
-        <AppContext>
-            <CssBaseline/>
-            <App/>
-        </AppContext>
+        <ColorContext>
+            <AppContext>
+                <CssBaseline/>
+                <App/>
+            </AppContext>
+        </ColorContext>
     </ThemeContext>,
     document.getElementById('root')
 );

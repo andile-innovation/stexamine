@@ -1,16 +1,16 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Card, CardContent, CardHeader, Grid, makeStyles, TextareaAutosize, Theme} from '@material-ui/core'
 import {FeeBumpTransaction, Networks, Transaction, xdr} from 'stellar-sdk';
 import {DisplayField} from 'components/Form'
 import moment from 'moment';
 import OperationCard from './OperationCard';
 import cx from 'classnames';
-import {getRandomColor} from 'utilities/color';
 import {AccountCard} from 'components/Stellar';
 import {useStellarContext} from 'context/Stellar';
 import {
     AnalyseTransactionSignaturesResult
-} from '../../context/Stellar/Client';
+} from 'context/Stellar/Client';
+import {useColorContext} from 'context/Color';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -44,22 +44,12 @@ export default function LandingPage() {
     const [parsingError, setParsingError] = useState(false);
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
     const [feeBumpTransaction, setFeeBumpTransaction] = useState<FeeBumpTransaction | undefined>(undefined);
-    const usedColors = useRef<{ [key: string]: string }>({})
     const [feeBumpTransactionSignatureAnalysisResults, setFeeBumpTransactionSignatureAnalysisResult] = useState<AnalyseTransactionSignaturesResult[]>([]);
     const [transactionSignatureAnalysisResults, setTransactionSignatureAnalysisResults] = useState<AnalyseTransactionSignaturesResult[]>([]);
     const {stellarContextStellarClient} = useStellarContext();
-
-    const getRandomColorForKey = (key: string) => {
-        // if a color is already stored for this key, use it
-        if (usedColors.current[key]) {
-            return usedColors.current[key]
-        }
-        // otherwise get a new random color
-        usedColors.current[key] = getRandomColor([
-            ...Object.values(usedColors.current)
-        ])
-        return usedColors.current[key];
-    }
+    const {
+        colorContextGetRandomColorForKey
+    } = useColorContext()
 
     useEffect(() => {
         if (!xdrString) {
@@ -150,7 +140,6 @@ export default function LandingPage() {
                                             />
                                             <AccountCard
                                                 accountID={transaction.source}
-                                                getRandomColorForKey={getRandomColorForKey}
                                                 label={'Transaction Source'}
                                                 invertColors
                                             />
@@ -203,7 +192,6 @@ export default function LandingPage() {
                                                 <OperationCard
                                                     key={idx}
                                                     operation={op}
-                                                    getRandomColorForKey={getRandomColorForKey}
                                                     transactionSource={transaction.source}
                                                 />
                                             </Grid>
@@ -229,7 +217,7 @@ export default function LandingPage() {
                                                         <DisplayField
                                                             label={'Public Key'}
                                                             value={r.publicKey}
-                                                            valueTypographyProps={{style: {color: getRandomColorForKey(r.publicKey)}}}
+                                                            valueTypographyProps={{style: {color: colorContextGetRandomColorForKey(r.publicKey)}}}
                                                         />
                                                         <DisplayField
                                                             label={'Result'}
@@ -262,7 +250,7 @@ export default function LandingPage() {
                                                         <DisplayField
                                                             label={'Public Key'}
                                                             value={r.publicKey}
-                                                            valueTypographyProps={{style: {color: getRandomColorForKey(r.publicKey)}}}
+                                                            valueTypographyProps={{style: {color: colorContextGetRandomColorForKey(r.publicKey)}}}
                                                         />
                                                         <DisplayField
                                                             label={'Result'}
@@ -290,7 +278,6 @@ export default function LandingPage() {
                             <CardContent>
                                 <AccountCard
                                     accountID={feeBumpTransaction.feeSource}
-                                    getRandomColorForKey={getRandomColorForKey}
                                     label={'Fee-bump Source Account'}
                                 />
                                 <DisplayField
